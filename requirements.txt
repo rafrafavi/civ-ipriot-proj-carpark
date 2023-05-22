@@ -1,1 +1,4 @@
 tomli==2.0.1
+
+setuptools~=65.5.1
+paho-mqtt~=1.6.1
