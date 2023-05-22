@@ -1,0 +1,12 @@
+# section name is the part we want to load
+# you may have many sections in the file
+[section_name]
+# key, value pairs for the data
+key = "value"
+another_key = 1234
+
+[parking_lot]
+location = "Moondalup City Square Parking"
+total_spaces = 192
+broker_host = "localhost"   # computer hosting the MQTT service
+broker_port = 1883          # port used to communicate with MQTT service
