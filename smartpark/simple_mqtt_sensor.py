@@ -1,7 +1,9 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
 
+import paho.mqtt.client as paho
 import mqtt_device
+
 
 class Sensor(mqtt_device.MqttDevice):
 
