@@ -24,14 +24,12 @@ class CarPark(mqtt_device.MqttDevice):
         readable_time = datetime.now().strftime('%H:%M')
         print(f"TIME: {readable_time}, " +
               f"SPACES: {self.available_spaces}, " +
-              f"TEMPC: 42") # TODO: Temperature
+              f"TEMP°C: 42")  # TODO: Temperature
         # TODO: Publish to MQTT
 
     def on_car_entry(self):
         self.total_cars += 1
         self._publish_event()
-
-
 
     def on_car_exit(self):
         self.total_cars -= 1
