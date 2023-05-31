@@ -1,9 +1,4 @@
-
-import paho.mqtt.client as paho
-
-import simple_mqtt_device
-
-class Sensor(mqtt_device.MqttDevice):
+class MqttDevice:
     def __init__(self, config):
         self.name = config['name']
         self.location = config['location']
@@ -37,19 +32,4 @@ class Sensor(mqtt_device.MqttDevice):
             if reply == 'y':
                 self.on_detection("Car, I saw a car!!")
             elif reply == 'n':
-                self.on_detection("Car, I did not see a car!!")
-
-
-
-if __name__ == '__main__':
-    config = {'name': 'super sensor',
-              'location': 'L306',
-              'topic': "lot/sensor",
-              'broker': 'localhost',
-              'port': 1883,
-              'type': 'ENTRY'
-              }
-
-    sensor = Sensor(config)
-    print("Sensor initialized")
-    sensor.start_sensing()
+                self.on_detection("Car, I saw a car!!")

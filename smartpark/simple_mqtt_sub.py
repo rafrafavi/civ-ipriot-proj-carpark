@@ -9,6 +9,7 @@ def on_message(client, userdata, msg):
 
 # start the client & connect to MQTT broker/server
 client = paho.Client()
+
 # when a message arrives - display it
 client.on_message = on_message
 client.connect(BROKER, PORT)
