@@ -1,8 +1,5 @@
 import paho.mqtt.client as paho
 
-
-
-
 class MqttDevice:
     def __init__(self, config, device_name='sensor'):
         self.name = config['name']

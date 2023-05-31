@@ -1,17 +1,19 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
+
 import paho.mqtt.client as paho
 import mqtt_device
+
 
 class Sensor(mqtt_device.MqttDevice):
 
     def on_detection(self, message):
-        """The method that is triggered when a detection occurs"""
-        message =f'{self.type}, {message}'
+        """Triggered when a detection occurs"""
         self.client.publish(self.topic, message)
 
     def start_sensing(self):
-        """a blocking event loop that waits for detection events, in this case Enter presses"""
+        """ A blocking event loop that waits for detection events, in this
+        case Enter presses"""
         while True:
             input("Press Enter when 🚗 detected!")
             self.on_detection("Car detection took place")
