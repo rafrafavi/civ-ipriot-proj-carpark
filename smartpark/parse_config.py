@@ -30,9 +30,25 @@ Finally, you can use `yaml` if you prefer.
 
 
 """
-
+import tomli
+from pathlib import Path
 
 
 def parse_config(config: dict) -> dict:
     """Parse the config file and return the values as a dictionary"""
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}
+    # Returns the configuration data in the format we want
+    return {
+        'location': config['location'],
+        'total_spaces': config['total_spaces'],
+        'broker_host': config['broker_host'],
+        'broker_port': config['broker_port']
+    }
+
+
+def load_config(filename: str, section_name: str = "default") -> dict:
+    # get actual file path, and load (ASCII-8) data from file
+    file_data = Path(f"{filename}").read_text(encoding="utf-8")
+    # convert TOML data from file into a dictionary
+    config_dict = tomli.loads(file_data)
+    # return the parsed data back from the TOML section: "section_name"
+    return parse_config(config_dict[section_name])

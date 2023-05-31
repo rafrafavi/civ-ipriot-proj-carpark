@@ -50,7 +50,6 @@ Methods:
 ## Class Diagram
 
 ```mermaid
-
 classDiagram
     ParkingLot --> Display : updates (via MQTT)
     class ParkingLot {
