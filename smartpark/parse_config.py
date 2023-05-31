@@ -27,8 +27,6 @@ see [realpython.com](https://realpython.com/python-toml/) for more info.
 
 Finally, you can use `yaml` if you prefer.
 
-
-
 """
 
 

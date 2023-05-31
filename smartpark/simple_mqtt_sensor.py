@@ -1,9 +1,6 @@
 import paho.mqtt.client as paho
 
 
-
-
-
 # client.publish("lot/sensor", "Hello from Python")
 
 
