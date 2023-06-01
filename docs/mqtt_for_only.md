@@ -7,13 +7,10 @@ To use an MQTT server on Windows using Python and the Paho library, follow these
 
 1. Install Mosquitto MQTT Broker:
    Download the Mosquitto MQTT broker for Windows from [mosquitto.org](https://mosquitto.org/download/) and follow the installation instructions.
-
 2. Start Mosquitto Broker:
    After installing, open a Command Prompt, and run the command `mosquitto`. This will start the Mosquitto MQTT broker with default settings.
-
 3. Install Python Paho-MQTT library:
    Open another Command Prompt and run `pip install paho-mqtt` to install the Paho-MQTT library for Python.
-
 4. Create a Python script to publish a message:
    Create a file named `mqtt_publisher.py` and add the following code:
 
@@ -30,7 +27,6 @@ To use an MQTT server on Windows using Python and the Paho library, follow these
    client.connect("localhost", 1883, 60)
    client.loop_forever()
    ```
-
 5. Create a Python script to subscribe to a topic:
    Create a file named `mqtt_subscriber.py` and add the following code:
 
@@ -51,7 +47,6 @@ To use an MQTT server on Windows using Python and the Paho library, follow these
    client.connect("localhost", 1883, 60)
    client.loop_forever()
    ```
-
 6. Test the setup:
    Open two Command Prompts. In the first one, navigate to the folder containing `mqtt_publisher.py` and `mqtt_subscriber.py`. Run the subscriber script by executing `python mqtt_subscriber.py`. In the second Command Prompt, run the publisher script by executing `python mqtt_publisher.py`.
 
