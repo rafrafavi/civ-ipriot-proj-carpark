@@ -2,6 +2,11 @@
 a publication via mqtt"""
 
 import mqtt_device
+import time
+from random import randrange, uniform
+import json
+from datetime import datetime
+from Car_Class import Car
 
 class Sensor(mqtt_device.MqttDevice):
 
@@ -13,8 +18,25 @@ class Sensor(mqtt_device.MqttDevice):
         """ A blocking event loop that waits for detection events, in this
         case Enter presses"""
         while True:
-            input("Press Enter when 🚗 detected!")
-            self.on_detection("Car detection took place")
+            now = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            if randrange(2) == 1:
+                car = Car(parked=True, brand_list=Car.brand_list, colour_list=Car.colour_list)
+                car.arrived()
+                car_data = {
+                    "Brand": car.brand,
+                    "Colour": car.colour,
+                    "Registration": car.registration,
+                    "Parked": car.parked,
+                    "Arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
+                json_car_data = json.dumps(car_data)
+                self.on_detection(json_car_data)
+                print(f"New Car Arrival: {car.colour} {car.brand}, Registration: {car.registration},"
+                f"Arrival: {car.arrival.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+
+
+            time.sleep(5)
+
 
 
 if __name__ == '__main__':
