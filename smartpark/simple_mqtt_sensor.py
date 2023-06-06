@@ -51,3 +51,4 @@ if __name__ == '__main__':
     sensor = Sensor(config)
     print("Sensor initialized")
     sensor.start_sensing()
+
