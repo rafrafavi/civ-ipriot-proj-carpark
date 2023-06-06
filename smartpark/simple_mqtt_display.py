@@ -21,8 +21,8 @@ class Display(mqtt_device.MqttDevice):
 
         if topic == 'lot/L306/sensor/car_arrived':
             print(f'Update : {msg_data}')
-        elif topic == "another topic":
-            print(f'Received message from topic2: {msg_data}')
+        elif topic == "lot/L306/sensor/car_exited":
+            print(f'Update : {msg_data}')
 
 
 
