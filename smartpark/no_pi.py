@@ -71,14 +71,14 @@ class WindowedDisplay:
 # -----------------------------------------#
 
 
-class CarParkDisplay :
+class CarParkDisplay:
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI
     fields = ['Available bays', 'Temperature', 'At']
 
     def __init__(self):
         self.window = WindowedDisplay(
-            'Joondalup', CarParkDisplay.fields)
+            'Moondalup', CarParkDisplay.fields)
         updater = threading.Thread(target=self.check_updates)
         updater.daemon = True
         updater.start()
