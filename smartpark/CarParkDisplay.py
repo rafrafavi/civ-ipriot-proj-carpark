@@ -1,3 +1,9 @@
+
+from random import random
+from datetime import time
+import threading
+import no_pi
+
 class CarParkDisplay():
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI

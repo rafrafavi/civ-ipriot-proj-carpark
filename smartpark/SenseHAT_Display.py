@@ -1,1 +1,0 @@
-sense.show_message()

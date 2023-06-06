@@ -53,6 +53,8 @@ class parking_lot:
     def on_publish(self, client, userdata, mid):
         print("Message published with mid " + str(mid))
 
+
+
 # Example usage:
 config = {
     'location': 'Parking Lot A',
