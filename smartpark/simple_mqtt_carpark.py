@@ -9,13 +9,18 @@ class CarPark(mqtt_device.MqttDevice):
     """Creates a carpark object to store the state of cars in the lot"""
 
     def __init__(self, config):
-        super().__init__(config)
-        self.total_spaces = config['total-spaces']
-        self.total_cars = config['total-cars']
+        super().__init__(config['broker'])
+        carpark_name = config['broker'] ['location']
+        self.total_spaces = config.get(f" {carpark_name}.total_spaces",192)
+        self.total_cars = config.get(f" {carpark_name}.total-cars",0)
+        self.temperature = None
+        print(f" Carpark at {carpark_name} is ready")
         self.client.on_message = self.on_message
         self.client.subscribe('sensor')
+        self.client.subscribe('car/detection')
+
         self.client.loop_forever()
-        self._temperature = None
+
 
     @property
     def available_spaces(self):
@@ -24,11 +29,12 @@ class CarPark(mqtt_device.MqttDevice):
 
     @property
     def temperature(self):
-        self._temperature
+        return self._temperature
     
     @temperature.setter
     def temperature(self, value):
         self._temperature = value
+
         
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M')
@@ -36,13 +42,13 @@ class CarPark(mqtt_device.MqttDevice):
             (
                 f"TIME: {readable_time}, "
                 + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
+                + f"TEMPC: {self.temperature}"
             )
         )
         message = (
             f"TIME: {readable_time}, "
             + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
+            + f"TEMPC: {self.temperature}"
         )
         self.client.publish('display', message)
 
@@ -58,7 +64,11 @@ class CarPark(mqtt_device.MqttDevice):
 
     def on_message(self, client, userdata, msg: MQTTMessage):
         payload = msg.payload.decode()
-        # TODO: Extract temperature from payload
+        topic =  msg.topic
+        if topic == 'sensor':
+            temperature = payload.split(',')[-1]
+            self.temperature = temperature
+        # TODO: Extract temperature from payload -done*
         # self.temperature = ... # Extracted value
         if 'exit' in payload:
             self.on_car_exit()
@@ -67,17 +77,9 @@ class CarPark(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config = {'name': "raf-park",
-              'total-spaces': 130,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
-    # TODO: Read config from file
-    car_park = CarPark(config)
+    # TODO: Read config from file - done
+    from config_parser import parse_config
+    config = parse_config("config.toml")
+    CarPark(config)
     print("Carpark initialized")
-    print("Carpark initialized")
+
