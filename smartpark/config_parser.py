@@ -32,7 +32,6 @@ Finally, you can use `yaml` if you prefer.
 """
 
 
-
 def parse_config(config: dict) -> dict:
     """Parse the config file and return the values as a dictionary"""
     # TODO: get the configuration from a parsed file

@@ -36,13 +36,13 @@ class CarPark(mqtt_device.MqttDevice):
             (
                 f"TIME: {readable_time}, "
                 + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
+                + "TEMP°C: 42"
             )
         )
         message = (
             f"TIME: {readable_time}, "
             + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
+            + "TEMP°C: 42"
         )
         self.client.publish('display', message)
 
@@ -76,6 +76,8 @@ if __name__ == '__main__':
               'is_stuff': False
               }
     # TODO: Read config from file
+    print("Car park initialised")
     car_park = CarPark(config)
-    print("Carpark initialized")
-    print("Carpark initialized")
+    print("haha you'll never read me")
+
+

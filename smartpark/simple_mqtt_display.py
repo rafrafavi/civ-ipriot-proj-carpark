@@ -24,14 +24,15 @@ class Display(mqtt_device.MqttDevice):
        # TODO: Parse the message and extract free spaces,\
        #  temperature, time
 
+
 if __name__ == '__main__':
     config = {'name': 'display',
-     'location': 'L306',
-     'topic-root': "lot",
-     'broker': 'localhost',
-     'port': 1883,
-     'topic-qualifier': 'na'
-     }
+    'location': 'L306',
+    'topic-root': "lot",
+    'broker': 'localhost',
+    'port': 1883,
+    'topic-qualifier': 'na'}
+
     # TODO: Read config from file
     display = Display(config)
 
