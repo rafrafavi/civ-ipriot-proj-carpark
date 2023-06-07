@@ -35,6 +35,7 @@ if __name__ == '__main__':
               'topic-root': "lot",
               'broker': 'localhost',
               'port': 1883,
+              'topic-qualifier': 'entry',
               }
     # TODO: Read previous config from file instead of embedding
 
