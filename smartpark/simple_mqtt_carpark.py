@@ -1,7 +1,8 @@
+from datetime import datetime
+
+import mqtt_device
 import paho.mqtt.client as paho
 from paho.mqtt.client import MQTTMessage
-import mqtt_device
-from datetime import datetime
 
 
 class CarPark(mqtt_device.MqttDevice):
@@ -12,20 +13,38 @@ class CarPark(mqtt_device.MqttDevice):
         self.total_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
         self.client.on_message = self.on_message
-        self.client.subscribe('+/+/+/+')
+        self.client.subscribe('sensor')
         self.client.loop_forever()
+        self._temperature = None
 
     @property
     def available_spaces(self):
         available = self.total_spaces - self.total_cars
-        return available if available > 0 else 0
+        return max(available, 0)
 
+    @property
+    def temperature(self):
+        self._temperature
+    
+    @temperature.setter
+    def temperature(self, value):
+        self._temperature = value
+        
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M')
-        print(f"TIME: {readable_time}, " +
-              f"SPACES: {self.available_spaces}, " +
-              f"TEMP°C: 42")  # TODO: Temperature
-        # TODO: Publish to MQTT
+        print(
+            (
+                f"TIME: {readable_time}, "
+                + f"SPACES: {self.available_spaces}, "
+                + "TEMPC: 42"
+            )
+        )
+        message = (
+            f"TIME: {readable_time}, "
+            + f"SPACES: {self.available_spaces}, "
+            + "TEMPC: 42"
+        )
+        self.client.publish('display', message)
 
     def on_car_entry(self):
         self.total_cars += 1
@@ -36,14 +55,13 @@ class CarPark(mqtt_device.MqttDevice):
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
-        # print(f'Received {msg.payload.decode()}')
-        print(msg.topic)
-        topic = msg.topic.strip().split('/')[-1]
-        print(topic)
-        if topic == 'entry':
-            self.on_car_entry()
-        else:
+        payload = msg.payload.decode()
+        # TODO: Extract temperature from payload
+        # self.temperature = ... # Extracted value
+        if 'exit' in payload:
             self.on_car_exit()
+        else:
+            self.on_car_entry()
 
 
 if __name__ == '__main__':
@@ -57,5 +75,7 @@ if __name__ == '__main__':
               'topic-qualifier': 'entry',
               'is_stuff': False
               }
+    # TODO: Read config from file
     car_park = CarPark(config)
+    print("Carpark initialized")
     print("Carpark initialized")
