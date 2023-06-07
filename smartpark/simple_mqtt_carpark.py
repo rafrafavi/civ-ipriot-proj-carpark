@@ -1,5 +1,5 @@
+import random
 from datetime import datetime
-
 import mqtt_device
 import paho.mqtt.client as paho
 from paho.mqtt.client import MQTTMessage
@@ -13,7 +13,7 @@ class CarPark(mqtt_device.MqttDevice):
         self.total_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
         self.client.on_message = self.on_message
-        self.client.subscribe('sensor')
+        self.client.subscribe('sensor')  # subscribes to "sensor" topic, in sensor class.
         self.client.loop_forever()
         self._temperature = None
 
@@ -25,32 +25,31 @@ class CarPark(mqtt_device.MqttDevice):
     @property
     def temperature(self):
         self._temperature
-    
+
     @temperature.setter
     def temperature(self, value):
         self._temperature = value
-        
+
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M')
+        temperature = random.randint(10, 35)
         print(
             (
-                f"TIME: {readable_time}, "
-                + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
+                    f"TIME: {readable_time}, "
+                    + f"SPACES: {self.available_spaces}, "
+                    + f"TEMP: {temperature}℃"
             )
         )
         message = (
-            f"TIME: {readable_time}, "
-            + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
+                f"TIME: {readable_time}, "
+                + f"SPACES: {self.available_spaces}, "
+                + f"TEMP: {temperature}℃"
         )
-        self.client.publish('display', message)
+        self.client.publish('display', message)  # sends the message to subscriber with topic "display"
 
     def on_car_entry(self):
         self.total_cars += 1
         self._publish_event()
-
-
 
     def on_car_exit(self):
         self.total_cars -= 1
