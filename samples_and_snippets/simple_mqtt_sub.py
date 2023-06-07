@@ -1,4 +1,5 @@
 import paho.mqtt.client as paho
+from paho.mqtt.client import MQTTMessage
 
 BROKER, PORT = "localhost", 1883
 
