@@ -35,8 +35,7 @@ if __name__ == '__main__':
                'topic-root': "lot",
                'broker': 'localhost',
                'topic-qualifier': 'entry',
-               'port': 1883,
-               }
+               'port': 1883}
     # TODO: Read previous config from file instead of embedding
     sensor1 = Sensor(config1)
     print("Sensor initialized")

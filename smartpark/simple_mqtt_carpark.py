@@ -73,8 +73,7 @@ if __name__ == '__main__':
               'broker': 'localhost',
               'port': 1883,
               'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
+              'is_stuff': False}
     # TODO: Read config from file
     print("Car park initialised")
     car_park = CarPark(config)

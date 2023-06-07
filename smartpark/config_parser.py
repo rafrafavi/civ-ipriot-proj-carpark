@@ -1,3 +1,4 @@
+import json
 """A class or function to parse the config file and return the values as a dictionary.
 
 The config file itself can be any of the following formats:
@@ -26,13 +27,12 @@ python -m pip install tomli
 see [realpython.com](https://realpython.com/python-toml/) for more info.
 
 Finally, you can use `yaml` if you prefer.
-
-
-
 """
 
 
-def parse_config(config: dict) -> dict:
+def parse_config() -> dict:
     """Parse the config file and return the values as a dictionary"""
+    with open("config.json") as json_config:
+        config = json.load(json_config)
+        return config
     # TODO: get the configuration from a parsed file
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}

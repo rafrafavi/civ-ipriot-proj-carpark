@@ -1,7 +1,7 @@
 {
     "CarParks": [
         {
-            "name": "raf-park-international",
+            "name": "big-bill-hell's-cars",
             "total-spaces": 130,
             "total-cars": 0,
             "location": "moondalup",
@@ -9,17 +9,17 @@
             "port": 1883,
             "Sensors": [
                 {
-                    "name": "sensor1",
+                    "name": "sensor-entry",
                     "type": "entry"
                 },
                 {
-                    "name": "sensor2",
+                    "name": "sensor-exit",
                     "type": "exit"
                 }
             ],
             "Displays": [
                 {
-                    "name": "display1"
+                    "name": "display-bill1"
                 }
             ]
         }
