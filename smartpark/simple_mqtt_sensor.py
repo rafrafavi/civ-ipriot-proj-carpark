@@ -23,11 +23,11 @@ class Sensor(mqtt_device.MqttDevice):
                 car = Car(parked=True, brand_list=Car.brand_list, colour_list=Car.colour_list)
                 car.arrived()
                 car_data = {
-                    "Brand": car.brand,
-                    "Colour": car.colour,
-                    "Registration": car.registration,
-                    "Parked": car.parked,
-                    "Arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    "brand": car.brand,
+                    "colour": car.colour,
+                    "registration": car.registration,
+                    "parked": car.parked,
+                    "arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
                 }
                 json_car_data = json.dumps(car_data)
                 self.on_detection(json_car_data)
