@@ -1,12 +1,10 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
 import random
-
 import mqtt_device
 
 
 class Sensor(mqtt_device.MqttDevice):
-
     @property
     def temperature(self):
         """Returns the current temperature"""

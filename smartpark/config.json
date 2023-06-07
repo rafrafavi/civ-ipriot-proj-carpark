@@ -9,11 +9,11 @@
             "port": 1883,
             "Sensors": [
                 {
-                    "name": "sensor-entry",
+                    "name": "sensor1",
                     "type": "entry"
                 },
                 {
-                    "name": "sensor-exit",
+                    "name": "sensor2",
                     "type": "exit"
                 }
             ],
