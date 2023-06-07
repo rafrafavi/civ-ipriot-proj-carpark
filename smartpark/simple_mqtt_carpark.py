@@ -66,18 +66,6 @@ class CarPark(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config = parse_config() #{'name': "raf-park",
-    #           'total-spaces': 130,
-    #           'total-cars': 0,
-    #           'location': 'L306',
-    #           'topic-root': "lot",
-    #           'broker': 'localhost',
-    #           'port': 1883,
-    #           'topic-qualifier': 'entry',
-    #           'is_stuff': False}
-
+    config = parse_config()
     print("Car park initialised")
     car_park = CarPark(config)
-    print("haha you'll never read me")
-
-
