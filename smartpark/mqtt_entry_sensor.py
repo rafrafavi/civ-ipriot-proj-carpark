@@ -28,13 +28,13 @@ class Sensor(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config1 = {'name': 'sensor',
-               'location': 'moondalup',
-               'topic-root': "lot",
-               'broker': 'localhost',
-               'topic-qualifier': 'entry',
-               'port': 1883}
+    config_hardcoded = {'name': 'sensor',
+                        'location': 'moondalup',
+                        'topic-root': "lot",
+                        'broker': 'localhost',
+                        'topic-qualifier': 'entry',
+                        'port': 1883}
     # TODO: Read previous config from file instead of embedding
-    sensor1 = Sensor(config1)
-    print("Sensor initialized")
-    sensor1.start_sensing()
+    entry_sensor = Sensor(config_hardcoded)
+    print("Sensor initialised")
+    entry_sensor.start_sensing()

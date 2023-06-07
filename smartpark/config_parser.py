@@ -35,4 +35,3 @@ def parse_config() -> dict:
     with open("config.json") as json_config:
         config = json.load(json_config)
         return config
-    # TODO: get the configuration from a parsed file
