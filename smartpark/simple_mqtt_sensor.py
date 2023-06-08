@@ -1,41 +1,48 @@
-"""Demonstrates a simple implementation of an 'event' listener that triggers 
+""""Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
-import paho.mqtt.client as paho
+import random
+
+import mqtt_device
 
 
-class Sensor:
-    def __init__(self, config):
-        self.name = config['name']
-        self.location = config['location']
-        self.topic = config['topic']
-        self.broker = config['broker']
-        self.port = config['port']
-        
-        # initialise a paho client and bind it to the object (has-a)
-        self.client = paho.Client()
-        self.client.connect(self.broker,
-                            self.port)
+class Sensor(mqtt_device.MqttDevice):
 
+    @property
+    def temperature(self):
+        """Returns the current temperature"""
+        return random.randint(10, 35) 
 
     def on_detection(self, message):
-        """The method that is triggered when a detection occurs"""
-        self.client.publish(self.topic, message)
+        """Triggered when a detection occurs"""
+        self.client.publish('sensor', message)
 
     def start_sensing(self):
-        """a blocking event loop that waits for detection events, in this case Enter presses"""
+        """ A blocking event loop that waits for detection events, in this
+        case Enter presses"""
         while True:
-            input("Press Enter when 🚗 detected!")
-            self.on_detection("Car detection took place")
-
+            print("Press E when 🚗 entered!")
+            print("Press X when 🚖 exited!")
+            detection = input("E or X> ").upper()
+            if detection == 'E':
+                self.on_detection(f"entered, {self.temperature}")
+            else:
+                self.on_detection(f"exited, {self.temperature}")
 
 
 if __name__ == '__main__':
-    config = {'name': 'super sensor',
-              'location': 'L306',
-              'topic': "lot/sensor",
+    config1 = {'name': 'sensor',
+              'location': 'moondalup',
+              'topic-root': "lot",
               'broker': 'localhost',
-              'port': 1883}
+              'port': 1883,
+              }
+    # TODO: Read previous config from file instead of embedding
 
-    sensor = Sensor(config)
+    sensor1 = Sensor(config1)
+
+
     print("Sensor initialized")
-    sensor.start_sensing()
+    sensor1.start_sensing()
+
+    sensor1.start_sensing()
+
