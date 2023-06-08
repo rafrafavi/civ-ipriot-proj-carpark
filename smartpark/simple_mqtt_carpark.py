@@ -4,7 +4,7 @@ import time
 import random
 import json
 from datetime import datetime
-from Car_Class import Car
+from car import Car
 
 class Carpark(mqtt_device.MqttDevice):
     """Creates a carpark object to store the state of cars in the lot"""
@@ -15,7 +15,7 @@ class Carpark(mqtt_device.MqttDevice):
         self.total_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
         self.client.on_message = self.on_message
-        self.client.subscribe('lot/L306/sensor/entry')
+        self.client.subscribe('+/+/+/+')
         self.parking_spaces = {}
         for i in range(1, 130):
             self.parking_spaces[i] = {"Status": "Empty"}
@@ -40,7 +40,7 @@ class Carpark(mqtt_device.MqttDevice):
         if parking_space is None:
             print("No available parking spaces")
             return
-        car = msg_data
+        car = msg_data["Car"]
 
 
 
@@ -57,25 +57,26 @@ class Carpark(mqtt_device.MqttDevice):
 
 
 
-    def on_car_exit(self):
+    def on_car_exit(self, msg_data):
+  #suscribe to topic to change to amout of cars
+        if msg_data == "Car Exited":
+            occupied_spaces = [space for space, status in self.parking_spaces.items() if status["Status"] == "Occupied"]
+            selected_space = random.choice(occupied_spaces)
+            car = self.parking_spaces[selected_space]["Car"]
+            colour = car["colour"]
+            brand = car["brand"]
 
-            if random.randrange(2) == 1:
-                occupied_spaces = [space for space, status in self.parking_spaces.items() if status["Status"] == "Occupied"]
-                selected_space = random.choice(occupied_spaces)
-                car = self.parking_spaces[selected_space].get("Car")
-                colour = car["colour"]
-                brand = car["brand"]
-                print(f"A {colour} {brand} has exited. There are {self.total_cars} cars parked and "
-              f"{self.available_spaces} parking spaces left")
+            del self.parking_spaces[selected_space]
+            self.parking_spaces[selected_space] = {"Status": "Empty"}
 
-                del self.parking_spaces[selected_space]
-                self.parking_spaces[selected_space] = {"Status": "Empty"}
-                self.total_cars -= 1
-                topic = "lot/L306/sensor/car_exited"
-                message = f"A car has exited the carpark. Total parked cars: {self.total_cars}. " \
-                          f"Total empty parking bays {self.available_spaces}"
-                self.client.publish(topic, message)
-                #print(message)
+            self.total_cars -= 1
+            print(f"A {colour} {brand} has exited. There are {self.total_cars} cars parked and "
+                  f"{self.available_spaces} parking spaces left")
+            topic = "lot/L306/sensor/car_left"
+            message = f"A car has exited the carpark. Total parked cars: {self.total_cars}. " \
+                      f"Total empty parking bays {self.available_spaces}"
+            self.client.publish(topic, message)
+            #print(message)
 
 
 
@@ -92,15 +93,20 @@ class Carpark(mqtt_device.MqttDevice):
         msg_data = msg.payload.decode("utf-8")
         topic = msg.topic
         #print(f"Received message. Topic: {topic}, Payload: {msg_data}")
-        msg_data = json.loads(msg_data)
+
+        if topic == 'lot/L306/sensor/entry':
+            msg_data = json.loads(msg_data)
+            self.on_car_entry(msg_data)
+            brand = msg_data["Car"]["brand"]
+            colour = msg_data["Car"]["colour"]
+            print(f"A {colour} {brand} has parked there are {self.total_cars} cars parked and "
+                  f"{self.available_spaces} parking spaces left")
+
+        elif topic == "lot/L306/sensor/car_exited":
+            self.on_car_exit(msg_data)
 
 
-        self.on_car_entry(msg_data)
-        brand = msg_data['brand']
-        colour = msg_data['colour']
-        print(f"A {colour} {brand} has parked there are {self.total_cars} cars parked and "
-        f"{self.available_spaces} parking spaces left")
-        self.on_car_exit()
+
 
 
 
@@ -118,10 +124,9 @@ if __name__ == '__main__':
               }
 
     carpark = Carpark(config)
-    # while True:
-    #     carpark.on_car_exit()
-    #     time.sleep(5)
-    # carpark.client.loop_forever()
-    # print("Carpark initialized")
+
+    carpark.client.loop_forever()
+    print("Carpark initialized")
+
 
 
