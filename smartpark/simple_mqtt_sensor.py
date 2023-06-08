@@ -12,14 +12,18 @@ import threading
 
 class Sensor(mqtt_device.MqttDevice):
 
+    @property
+    def temperature(self):
+        """Returns the current temperature"""
+        return random.randint(10, 35)
     def on_detection_entry(self, message):
-        """Triggered when a detection occurs"""
-        self.client.publish(self.topic, message)
+            """Triggered when a detection occurs"""
+            self.client.publish(self.topic, message)
 
-    def on_detection_exit(self, message):
+    def on_detection_exit(self, json_message):
         """Triggered when a detection occurs"""
         topic = "lot/L306/sensor/car_exited"
-        self.client.publish(topic, message)
+        self.client.publish(topic, json_message)
 
     def start_sensing_entry(self):
         """ A blocking event loop that waits for detection events, in this
@@ -29,12 +33,13 @@ class Sensor(mqtt_device.MqttDevice):
             if random.randrange(2) == 1:
                 car = Car(parked=True, brand_list=Car.brand_list, colour_list=Car.colour_list)
                 car.arrived()
+                temp = 'temperature', self.temperature
                 car_data = {"Car": {
                         "brand": car.brand,
                         "colour": car.colour,
                         "registration": car.registration,
                         "parked": car.parked,
-                        "arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ") }}
+                        "arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ") }}, temp
 
                 json_car_data = json.dumps(car_data)
                 self.on_detection_entry(json_car_data)
@@ -43,13 +48,14 @@ class Sensor(mqtt_device.MqttDevice):
 
 
             time.sleep(5)
-
     def start_sensing_exit(self):
         while True:
             if random.randrange(2) == 1:
+                temp = 'temperature', self.temperature
                 car_exited = "Car Exited"
-                message = f"{car_exited}"
-                self.on_detection_exit(message)
+                message = car_exited, temp
+                json_message = json.dumps(message)
+                self.on_detection_exit(json_message)
                 print("A car has exited")
 
 
@@ -76,7 +82,7 @@ if __name__ == '__main__':
     sensor = Sensor(config)
     print("Sensor initialized")
 
-    # I had ab issue with both sensors running at the same time as the start_sensing_entry is the orginal program
+    # I had a issue with both sensors running at the same time as the start_sensing_entry is the orginal program
     # was looping and blocking the start_sensing_exit. I did some research and came across this method of threading the
     # two methods so that they can both run automaticly.
     sensing_entry_thread = threading.Thread(target=sensor.start_sensing_entry)

@@ -31,7 +31,7 @@ class Carpark(mqtt_device.MqttDevice):
         available = self.total_spaces - self.total_cars
         return available if available > 0 else 0
 
-    def on_car_entry(self, msg_data):
+    def on_car_entry(self, car_dict, temp):
         for space, status in self.parking_spaces.items():
             if status["Status"] == "Empty":
                 parking_space = space
@@ -40,7 +40,7 @@ class Carpark(mqtt_device.MqttDevice):
         if parking_space is None:
             print("No available parking spaces")
             return
-        car = msg_data["Car"]
+        car = car_dict["Car"]
 
 
 
@@ -51,15 +51,15 @@ class Carpark(mqtt_device.MqttDevice):
 
         topic = f"lot/{self.config['location']}/sensor/car_arrived"
         message = f"A car arrived at parking space {parking_space}. Total parked cars: {self.total_cars}. " \
-                  f"Total empty parking bays: {self.available_spaces}"
+                  f"Total empty parking bays: {self.available_spaces}\n       The current temperature is : {temp}"
         self.client.publish(topic, message)
-        #print(message)
+        print(message)
 
 
 
-    def on_car_exit(self, msg_data):
+    def on_car_exit(self,message, temp):
   #suscribe to topic to change to amout of cars
-        if msg_data == "Car Exited":
+        if message == "Car Exited":
             occupied_spaces = [space for space, status in self.parking_spaces.items() if status["Status"] == "Occupied"]
             selected_space = random.choice(occupied_spaces)
             car = self.parking_spaces[selected_space]["Car"]
@@ -71,10 +71,10 @@ class Carpark(mqtt_device.MqttDevice):
 
             self.total_cars -= 1
             print(f"A {colour} {brand} has exited. There are {self.total_cars} cars parked and "
-                  f"{self.available_spaces} parking spaces left")
+                  f"{self.available_spaces} parking spaces left\n       The current temperature is : {temp}")
             topic = "lot/L306/sensor/car_left"
             message = f"A car has exited the carpark. Total parked cars: {self.total_cars}. " \
-                      f"Total empty parking bays {self.available_spaces}"
+                      f"Total empty parking bays {self.available_spaces}\n    The current temperature is : {temp}"
             self.client.publish(topic, message)
             #print(message)
 
@@ -92,18 +92,23 @@ class Carpark(mqtt_device.MqttDevice):
     def on_message(self, client, userdata, msg):
         msg_data = msg.payload.decode("utf-8")
         topic = msg.topic
-        #print(f"Received message. Topic: {topic}, Payload: {msg_data}")
+        print(f"Received message. Topic: {topic}, Payload: {msg_data}")
 
         if topic == 'lot/L306/sensor/entry':
             msg_data = json.loads(msg_data)
-            self.on_car_entry(msg_data)
-            brand = msg_data["Car"]["brand"]
-            colour = msg_data["Car"]["colour"]
+            car_dict = msg_data[0]
+            temp = msg_data[1][1]
+            self.on_car_entry(car_dict, temp)
+            brand = car_dict["Car"]["brand"]
+            colour = car_dict["Car"]["colour"]
             print(f"A {colour} {brand} has parked there are {self.total_cars} cars parked and "
                   f"{self.available_spaces} parking spaces left")
 
         elif topic == "lot/L306/sensor/car_exited":
-            self.on_car_exit(msg_data)
+            msg_data = json.loads(msg_data)
+            temp = msg_data[1]
+            message = msg_data[0]
+            self.on_car_exit(message, temp)
 
 
 
