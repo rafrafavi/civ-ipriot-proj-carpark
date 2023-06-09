@@ -3,6 +3,7 @@ a publication via mqtt"""
 import random
 
 import mqtt_device
+import config_parser
 
 
 class Sensor(mqtt_device.MqttDevice):
@@ -38,7 +39,8 @@ if __name__ == '__main__':
               }
     # TODO: Read previous config from file instead of embedding
 
-    sensor1 = Sensor(config1)
+    #sensor1 = Sensor(config1)
+    sensor1 = Sensor(parse_config)
 
 
     print("Sensor initialized")
