@@ -1,10 +1,4 @@
 import mqtt_device
-import time
-from random import randrange, uniform
-import json
-from datetime import datetime
-from car import Car
-
 
 class Display(mqtt_device.MqttDevice):
 
@@ -15,15 +9,16 @@ class Display(mqtt_device.MqttDevice):
         self.client.subscribe('+/+/+/+')
         self.client.loop_forever()
     def on_message(self, client, userdata, msg):
+        """I made this program simple to just print the data recieved containing the amount of bays avalible
+        and the temprature. This data could be display on screen at the entry and exit of the carpark"""
         msg_data = msg.payload.decode("utf-8")
         topic = msg.topic
         #print(f"Received message. Topic: {topic}, Payload: {msg_data}")
 
         if topic == 'lot/L306/sensor/car_arrived':
-            print(f'Update : {msg_data}')
-        elif topic == "lot/L306/sensor/car_exited":
-            print(f'Update : {msg_data}')
-
+            print(f'{msg_data}')
+        elif topic == "lot/L306/sensor/car_left":
+            print(f'{msg_data}')
 
 
 if __name__ == '__main__':
