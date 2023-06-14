@@ -39,10 +39,8 @@ if __name__ == '__main__':
               }
     # TODO: Read previous config from file instead of embedding
 
-    #sensor1 = Sensor(config1)
-    sensor1 = Sensor(parse_config)
-
-
+    config = config_parser.parse_config()
+    sensor1 = Sensor(config)
     print("Sensor initialized")
     sensor1.start_sensing()
 
