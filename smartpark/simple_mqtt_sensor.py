@@ -23,20 +23,25 @@ class Sensor(mqtt_device.MqttDevice):
         while True:
             print("Press E when 🚗 entered!")
             print("Press X when 🚖 exited!")
+            cars_in_carpark = 0
             detection = input("E or X> ").upper()
             if detection == 'E':
                 self.on_detection(f"entered, {self.temperature}")
-            else:
+                cars_in_carpark += 1
+            elif detection == 'X':
                 self.on_detection(f"exited, {self.temperature}")
+                cars_in_carpark -= 1
 
+
+            '''if detection == 'E' and self.total_cars >= cars_in_carpark:
+                self.on_detection(f"entered, {self.temperature}")
+                cars_in_carpark += 1
+            elif detection == 'X' and self.total_cars < cars_in_carpark:
+                self.on_detection(f"exited, {self.temperature}")
+                cars_in_carpark -= 1'''
 
 if __name__ == '__main__':
-    config1 = {'name': 'sensor',
-              'location': 'moondalup',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              }
+
     # TODO: Read previous config from file instead of embedding
 
     config = config_parser.parse_config()
