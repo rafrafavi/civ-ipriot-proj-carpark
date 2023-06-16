@@ -2,6 +2,10 @@
 name = 'name'
 location = "L306"
 total_spaces = 192
+total_cars = 0
 broker_host = 'localhost'
 broker_port = 1883
 topic = 'lot/sensor'
+topic_root = 'lot'
+topic_qualifier = 'sensor'
+
