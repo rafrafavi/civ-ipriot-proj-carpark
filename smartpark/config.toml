@@ -1,0 +1,7 @@
+[config]
+name = 'name'
+location = "L306"
+total_spaces = 192
+broker_host = 'localhost'
+broker_port = 1883
+topic = 'lot/sensor'
