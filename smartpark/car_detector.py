@@ -87,6 +87,7 @@ class CarDetector:
 
         self.root.mainloop()
 
+
     @ staticmethod
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
@@ -101,8 +102,6 @@ class CarDetector:
         payload = 'Car goes out'
         self.client.publish(MQTT_TOPIC, payload)
 
-    # Activate when connection established
-    # client.on_connect = on_connect
 
 
 if __name__ == '__main__':

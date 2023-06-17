@@ -1,14 +1,11 @@
-"""The following code is used to provide an alternative to students who do not have a Raspberry Pi.
-If you have a Raspberry Pi, or a SenseHAT emulator under Debian, you do not need to use this code.
-
-You need to split the classes here into two files, one for the CarParkDisplay and one for the CarDetector.
-Attend to the TODOs in each class to complete the implementation."""
 import random
 import threading
 import time
 import tkinter as tk
 from typing import Iterable
+import paho.mqtt.client as mqtt
 import toml
+from paho.mqtt.client import MQTTMessage
 from config_parser import parse_config
 
 config = parse_config()
@@ -16,10 +13,12 @@ config = parse_config()
 MQTT_HOST = config['display']['broker_host']  # "localhost"
 MQTT_PORT = config['display']['broker_port']  # "1883"
 MQTT_CLIENT_NAME = config['display']['name']  # "Car Park Display"
-MQTT_TOPIC_1 = config['display']['topic_1']  # "Available Bays"
-MQTT_TOPIC_2 = config['display']['topic_2']  # "Date/Time"
-MQTT_TOPIC_3 = config['display']['topic_3']  # "Current Temp"
+MQTT_TOPIC = config['display']['topic']
+# MQTT_TOPIC_1 = config['display']['topic_1']  # "Available Bays"
+# MQTT_TOPIC_2 = config['display']['topic_2']  # "Date/Time"
+# MQTT_TOPIC_3 = config['display']['topic_3']  # "Current Temp"
 MQTT_KEEP_ALIVE = 300
+
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class, just how to use it.       #
 # ------------------------------------------------------------------------------------#
@@ -85,9 +84,14 @@ class WindowedDisplay:
 class CarParkDisplay:
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI
-    fields = ['Available bays', 'Temperature', 'At']
+    fields = ['Available Bays', 'Temperature', 'Time']
 
     def __init__(self):
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        self.client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
+        self.client.loop_start()
         self.window = WindowedDisplay(
             'Moondalup', CarParkDisplay.fields)
         updater = threading.Thread(target=self.check_updates)
@@ -95,8 +99,18 @@ class CarParkDisplay:
         updater.start()
         self.window.show()
 
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected with result code " + str(rc))
+        self.client.subscribe(MQTT_TOPIC)
+
+    def on_message(self, client, userdata, msg):
+        print('a message was received')
+        payload = msg.payload.decode()
+
+
+
     def check_updates(self):
-        # TODO: This is where you should manage the MQTT subscription
+
         while True:
             # NOTE: Dictionary keys *must* be the same as the class fields
             field_values = dict(zip(CarParkDisplay.fields, [
@@ -107,6 +121,7 @@ class CarParkDisplay:
             time.sleep(random.randint(1, 10))
             # When you get an update, refresh the display.
             self.window.update(field_values)
+
 
 if __name__ == '__main__':
     CarParkDisplay()

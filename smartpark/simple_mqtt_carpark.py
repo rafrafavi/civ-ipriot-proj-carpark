@@ -43,7 +43,7 @@ class CarPark(MqttDevice):
         #    )
         #)
         message = (
-            f"Available Spaces: {self.available_spaces}, "
+            f"Available Bays: {self.available_spaces}, "
             + f"Time: {readable_time}, "
             + f"Temperature: {self._temperature}"
         )
@@ -86,11 +86,6 @@ class CarPark(MqttDevice):
             # print(self._temperature)
         else:
             pass
-
-
-
-
-
 
 
 if __name__ == '__main__':
