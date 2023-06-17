@@ -70,11 +70,11 @@ class WindowedDisplay:
 # TODO: STUDENT IMPLEMENTATION STARTS HERE #
 # -----------------------------------------#
 class CarDetector:
-    client = mqtt.Client()
-    client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
-    client.publish(MQTT_TOPIC)
     """Provides a couple of simple buttons that can be used to represent a sensor detecting a car."""
     def __init__(self):
+        self.client = mqtt.Client()
+        self.client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
+        self.client.publish(MQTT_TOPIC)
         self.root = tk.Tk()
         self.root.title("Car Detector ULTRA")
 
@@ -87,9 +87,9 @@ class CarDetector:
 
         self.root.mainloop()
 
-    def on_connect(client, userdata, flags, rc):
+    @ staticmethod
+    def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
-
 
     def incoming_car(self):
         # print("Car goes in")
@@ -103,7 +103,6 @@ class CarDetector:
 
     # Activate when connection established
     # client.on_connect = on_connect
-
 
 
 if __name__ == '__main__':
