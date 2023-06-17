@@ -50,19 +50,22 @@ class CarPark(MqttDevice):
 
     def on_car_entry(self):
         self.total_cars += 1
+        print(self.total_cars)
         self._publish_event()
 
 
 
     def on_car_exit(self):
         self.total_cars -= 1
+        print(self.total_cars)
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
         payload = msg.payload.decode()
+        print(payload)
         # TODO: Extract temperature from payload
         # self.temperature = ... # Extracted value
-        if 'exit' in payload:
+        if 'Car goes out' in payload:
             self.on_car_exit()
         else:
             self.on_car_entry()

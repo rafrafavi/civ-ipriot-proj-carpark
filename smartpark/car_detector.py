@@ -1,19 +1,19 @@
-"""The following code is used to provide an alternative to students who do not have a Raspberry Pi.
-If you have a Raspberry Pi, or a SenseHAT emulator under Debian, you do not need to use this code.
-
-You need to split the classes here into two files, one for the CarParkDisplay and one for the CarDetector.
-Attend to the TODOs in each class to complete the implementation."""
 import random
-import threading
 import time
 import tkinter as tk
 from typing import Iterable
+import paho.mqtt.client as mqtt
+from config_parser import parse_config
 
-# ------------------------------------------------------------------------------------#
-# You don't need to understand how to implement this class, just how to use it.       #
-# ------------------------------------------------------------------------------------#
-# TODO: got to the main section of this script **first** and run the CarParkDisplay.  #
 
+config = parse_config()
+
+MQTT_HOST = config['sensor']['broker_host']
+MQTT_PORT = config['sensor']['broker_port']
+MQTT_CLIENT_NAME = config['sensor']['name']
+MQTT_TOPIC = config['sensor']['topic']
+MQTT_KEEP_ALIVE = 300
+# print(f"Port: {MQTT_PORT}\nBroker: {MQTT_HOST}\nTopic: {MQTT_TOPIC}\nName: {MQTT_CLIENT_NAME}")
 
 class WindowedDisplay:
     """Displays values for a given set of fields as a simple GUI window. Use .show() to display the window; use .update() to update the values displayed.
@@ -69,38 +69,11 @@ class WindowedDisplay:
 # -----------------------------------------#
 # TODO: STUDENT IMPLEMENTATION STARTS HERE #
 # -----------------------------------------#
-
-
-class CarParkDisplay:
-    """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
-    # determines what fields appear in the UI
-    fields = ['Available bays', 'Temperature', 'At']
-
-    def __init__(self):
-        self.window = WindowedDisplay(
-            'Moondalup', CarParkDisplay.fields)
-        updater = threading.Thread(target=self.check_updates)
-        updater.daemon = True
-        updater.start()
-        self.window.show()
-
-    def check_updates(self):
-        # TODO: This is where you should manage the MQTT subscription
-        while True:
-            # NOTE: Dictionary keys *must* be the same as the class fields
-            field_values = dict(zip(CarParkDisplay.fields, [
-                f'{random.randint(0, 150):03d}',
-                f'{random.randint(0, 45):02d}℃',
-                time.strftime("%H:%M:%S")]))
-            # Pretending to wait on updates from MQTT
-            time.sleep(random.randint(1, 10))
-            # When you get an update, refresh the display.
-            self.window.update(field_values)
-
-
 class CarDetector:
-    """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
-
+    client = mqtt.Client()
+    client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
+    client.publish(MQTT_TOPIC)
+    """Provides a couple of simple buttons that can be used to represent a sensor detecting a car."""
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Car Detector ULTRA")
@@ -114,18 +87,29 @@ class CarDetector:
 
         self.root.mainloop()
 
+    def on_connect(client, userdata, flags, rc):
+        print("Connected with result code " + str(rc))
+
+    def on_message(self):
+        pass
+
     def incoming_car(self):
         # TODO: implement this method to publish the detection via MQTT
         print("Car goes in")
+        payload = 'Car goes in'
+        self.client.publish(MQTT_TOPIC, payload)
 
     def outgoing_car(self):
         # TODO: implement this method to publish the detection via MQTT
         print("Car goes out")
+        payload = 'Car goes out'
+        self.client.publish(MQTT_TOPIC, payload)
+
+    # Activate when connection established
+    client.on_connect = on_connect
+    # Listen for message and activate when message received
+    client.on_message = on_message
 
 
 if __name__ == '__main__':
-    # TODO: Run each of these classes in a separate terminal. You should see the CarParkDisplay update when you click the buttons in the CarDetector.
-    # These classes are not designed to be used in the same module - they are both blocking. If you uncomment one, comment-out the other.
-
-    CarParkDisplay()
-    # CarDetector()
+    CarDetector()
