@@ -8,7 +8,18 @@ import threading
 import time
 import tkinter as tk
 from typing import Iterable
+import toml
+from config_parser import parse_config
 
+config = parse_config()
+
+MQTT_HOST = config['display']['broker_host']  # "localhost"
+MQTT_PORT = config['display']['broker_port']  # "1883"
+MQTT_CLIENT_NAME = config['display']['name']  # "Car Park Display"
+MQTT_TOPIC_1 = config['display']['topic_1']  # "Available Bays"
+MQTT_TOPIC_2 = config['display']['topic_2']  # "Date/Time"
+MQTT_TOPIC_3 = config['display']['topic_3']  # "Current Temp"
+MQTT_KEEP_ALIVE = 300
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class, just how to use it.       #
 # ------------------------------------------------------------------------------------#
@@ -97,35 +108,5 @@ class CarParkDisplay:
             # When you get an update, refresh the display.
             self.window.update(field_values)
 
-
-class CarDetector:
-    """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
-
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("Car Detector ULTRA")
-
-        self.btn_incoming_car = tk.Button(
-            self.root, text='🚘 Incoming Car', font=('Arial', 50), cursor='right_side', command=self.incoming_car)
-        self.btn_incoming_car.pack(padx=10, pady=5)
-        self.btn_outgoing_car = tk.Button(
-            self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
-        self.btn_outgoing_car.pack(padx=10, pady=5)
-
-        self.root.mainloop()
-
-    def incoming_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes in")
-
-    def outgoing_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes out")
-
-
 if __name__ == '__main__':
-    # TODO: Run each of these classes in a separate terminal. You should see the CarParkDisplay update when you click the buttons in the CarDetector.
-    # These classes are not designed to be used in the same module - they are both blocking. If you uncomment one, comment-out the other.
-
     CarParkDisplay()
-    # CarDetector()

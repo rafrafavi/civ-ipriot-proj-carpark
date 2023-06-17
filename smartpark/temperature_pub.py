@@ -21,12 +21,12 @@ client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
 print(f"Sending Message to {MQTT_HOST} on port {MQTT_PORT} with topic {MQTT_TOPIC}")
 
 while True:
-    current_temp = uniform(20.0, 24.0)
+    current_temp = round(uniform(20, 24))
     current_time = datetime.now().strftime("%H:%M:%S")
     message_data = {
         "client": MQTT_CLIENT_NAME,
-        "temp": current_temp,
-        "datetime": current_time,
+        "Current Temp": current_temp,
+        "Date/Time": current_time,
     }
     send_message = toml.dumps(message_data)
     # Publish topic / Republish topic
