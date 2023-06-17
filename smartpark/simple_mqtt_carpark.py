@@ -35,18 +35,19 @@ class CarPark(MqttDevice):
         
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M:%S')
-        print(
-            (
-                f"TIME: {readable_time}, "
-                + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
-            )
-        )
+        #print(
+        #    (
+        #        f"Available Spaces: {self.available_spaces}, "
+        #        + f"Time: {readable_time}, "
+        #        + f"Temperature: {self._temperature}"
+        #    )
+        #)
         message = (
-            f"TIME: {readable_time}, "
-            + f"SPACES: {self.available_spaces}, "
-            + f"TEMPC: {self._temperature}"
+            f"Available Spaces: {self.available_spaces}, "
+            + f"Time: {readable_time}, "
+            + f"Temperature: {self._temperature}"
         )
+        print(message)
         self.client.publish('display', message)
 
     def on_car_entry(self):
