@@ -49,15 +49,23 @@ class CarPark(MqttDevice):
         self.client.publish('display', message)
 
     def on_car_entry(self):
-        self.total_cars += 1
+        if self.available_spaces != 0:
+            self.total_cars += 1
+        else:
+            pass
         print(self.total_cars)
+        print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
 
 
     def on_car_exit(self):
-        self.total_cars -= 1
+        if self.total_cars != 0:
+            self.total_cars -= 1
+        else:
+            pass
         print(self.total_cars)
+        print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
