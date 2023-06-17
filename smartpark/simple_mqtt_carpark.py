@@ -2,7 +2,7 @@ from datetime import datetime
 from mqtt_device import MqttDevice
 from paho.mqtt.client import MQTTMessage
 from config_parser import parse_config
-
+import toml
 
 class CarPark(MqttDevice):
 
@@ -15,6 +15,7 @@ class CarPark(MqttDevice):
         self.client.on_message = self.on_message
         # self.client.subscribe('sensor')
         self.client.subscribe(config['config']['topic'])
+        self.client.subscribe(config['temperature']['topic'])
         self.client.loop_forever()
         self._temperature = None
 
@@ -33,18 +34,18 @@ class CarPark(MqttDevice):
         self._temperature = value
         
     def _publish_event(self):
-        readable_time = datetime.now().strftime('%H:%M')
-        print(
-            (
-                f"TIME: {readable_time}, "
-                + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
-            )
-        )
+        readable_time = datetime.now().strftime('%H:%M:%S')
+        #print(
+        #    (
+        #        f"TIME: {readable_time}, "
+        #        + f"SPACES: {self.available_spaces}, "
+        #        + "TEMPC: 42"
+        #    )
+        #)
         message = (
             f"TIME: {readable_time}, "
             + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
+            + f"TEMPC: {self._temperature}"
         )
         self.client.publish('display', message)
 
@@ -53,7 +54,7 @@ class CarPark(MqttDevice):
             self.total_cars += 1
         else:
             pass
-        print(self.total_cars)
+        # print(self.total_cars)
         print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
@@ -64,19 +65,28 @@ class CarPark(MqttDevice):
             self.total_cars -= 1
         else:
             pass
-        print(self.total_cars)
+        # print(self.total_cars)
         print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
-        payload = msg.payload.decode()
-        print(payload)
-        # TODO: Extract temperature from payload
-        # self.temperature = ... # Extracted value
+        payload = msg.payload.decode("UTF-8")
+        # print(payload)
         if 'Car goes out' in payload:
             self.on_car_exit()
-        else:
+        elif 'Car goes in' in payload:
             self.on_car_entry()
+        elif 'Current Temp' in payload:
+            data = toml.loads(payload)
+            temperature = data['Current Temp']
+            # print(temperature)
+            self._temperature = temperature
+        else:
+            pass
+        print(self._temperature)
+
+
+
 
 
 if __name__ == '__main__':

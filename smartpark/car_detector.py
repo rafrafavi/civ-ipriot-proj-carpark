@@ -90,25 +90,20 @@ class CarDetector:
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
 
-    def on_message(self):
-        pass
 
     def incoming_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes in")
+        # print("Car goes in")
         payload = 'Car goes in'
         self.client.publish(MQTT_TOPIC, payload)
 
     def outgoing_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes out")
+        # print("Car goes out")
         payload = 'Car goes out'
         self.client.publish(MQTT_TOPIC, payload)
 
     # Activate when connection established
-    client.on_connect = on_connect
-    # Listen for message and activate when message received
-    client.on_message = on_message
+    # client.on_connect = on_connect
+
 
 
 if __name__ == '__main__':
