@@ -14,3 +14,17 @@ name = 'L306 Sensor'
 broker_host = 'localhost'
 broker_port = 1883
 topic = 'Car Park / Sensor / Lot / L306'
+
+[temperature]
+name = "Temperature Monitor"
+broker_host = 'localhost'
+broker_port = 1883
+topic = "Temperature"
+
+[display]
+name = "Car Park Display"
+broker_host = 'localhost'
+broker_port = 1883
+topic_1 = "Available Bays"
+topic_2 = "Date/Time"
+topic_3 = "Current Temp"
