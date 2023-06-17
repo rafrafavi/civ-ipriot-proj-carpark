@@ -1,5 +1,5 @@
 [broker]
-broker = '127.0.0.1'
+broker = '127.0.0.1' # can also use "localhost"
 port = 1883
 topic-root = 'carpark'
 topic-qualifier = 'controller'
