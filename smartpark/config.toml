@@ -1,11 +1,16 @@
 [config]
-name = 'name'
+name = 'Car Park'
 location = "L306"
 total_spaces = 192
 total_cars = 0
 broker_host = 'localhost'
 broker_port = 1883
-topic = 'lot/sensor'
-topic_root = 'lot'
-topic_qualifier = 'sensor'
+topic_root = 'Lot'
+topic_qualifier = 'Sensor'
+topic = 'Car Park / Sensor / Lot / L306'
 
+[sensor]
+name = 'L306 Sensor'
+broker_host = 'localhost'
+broker_port = 1883
+topic = 'Car Park / Sensor / Lot / L306'
