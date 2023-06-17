@@ -1,22 +1,23 @@
 from datetime import datetime
-
-import mqtt_device
-import paho.mqtt.client as paho
+from mqtt_device import MqttDevice
 from paho.mqtt.client import MQTTMessage
 from config_parser import parse_config
 
 
-class CarPark(mqtt_device.MqttDevice):
-    """Creates a carpark object to store the state of cars in the lot"""
+class CarPark(MqttDevice):
 
     def __init__(self, config):
         super().__init__(config)
         self.total_spaces = config['config']['total_spaces']
         self.total_cars = config['config']['total_cars']
+        # print(f"{self.name}, {self.location}, {self.broker}, {self.port}")
+        # print({self.topic})
         self.client.on_message = self.on_message
-        self.client.subscribe('sensor')
+        # self.client.subscribe('sensor')
+        self.client.subscribe(config['config']['topic'])
         self.client.loop_forever()
         self._temperature = None
+
 
     @property
     def available_spaces(self):
@@ -71,4 +72,3 @@ if __name__ == '__main__':
     config = parse_config()
     car_park = CarPark(config)
     print("Carpark initialized")
-
