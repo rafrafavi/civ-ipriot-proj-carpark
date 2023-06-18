@@ -73,6 +73,9 @@ class CarDetector:
         self.client = mqtt.Client()
         self.client.connect(MQTT_HOST, MQTT_PORT, MQTT_KEEP_ALIVE)
         self.client.publish(MQTT_TOPIC)
+        self.client.on_connect = self.on_connect
+        self.client.loop_start()
+
         self.root = tk.Tk()
         self.root.title("Car Detector ULTRA")
 
@@ -85,7 +88,6 @@ class CarDetector:
 
         self.root.mainloop()
 
-    @ staticmethod
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
 
