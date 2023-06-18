@@ -112,22 +112,14 @@ class CarParkDisplay:
         temperature = data.get('Temperature')
         print(available_bays)
 
-
-        updater = threading.Thread(target=self.check_updates, args=(available_bays, current_time, temperature))
-        updater.daemon = True
-        updater.start()
-
-    def check_updates(self, available_bays, current_time, temperature):
-        while True:
-            # NOTE: Dictionary keys *must* be the same as the class fields
-            field_values = dict(zip(CarParkDisplay.fields, [
-                f"{available_bays}",
-                f'{temperature}℃',
-                f'{current_time}']))
-            # Pretending to wait on updates from MQTT
-            # time.sleep(random.randint(1, 10))
-            # When you get an update, refresh the display.
-            self.window.update(field_values)
+        field_values = dict(zip(CarParkDisplay.fields, [
+            f"{available_bays}",
+            f'{temperature}℃',
+            f'{current_time}']))
+        # Pretending to wait on updates from MQTT
+        # time.sleep(random.randint(1, 10))
+        # When you get an update, refresh the display.
+        self.window.update(field_values)
 
 
 if __name__ == '__main__':
