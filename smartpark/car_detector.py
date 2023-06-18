@@ -1,5 +1,3 @@
-import random
-import time
 import tkinter as tk
 from typing import Iterable
 import paho.mqtt.client as mqtt
@@ -87,7 +85,6 @@ class CarDetector:
 
         self.root.mainloop()
 
-
     @ staticmethod
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
@@ -101,7 +98,6 @@ class CarDetector:
         # print("Car goes out")
         payload = 'Car goes out'
         self.client.publish(MQTT_TOPIC, payload)
-
 
 
 if __name__ == '__main__':

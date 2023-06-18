@@ -1,11 +1,7 @@
-import random
-import threading
-import time
 import tkinter as tk
 from typing import Iterable
 import paho.mqtt.client as mqtt
 import toml
-from paho.mqtt.client import MQTTMessage
 from config_parser import parse_config
 
 config = parse_config()
@@ -14,16 +10,12 @@ MQTT_HOST = config['display']['broker_host']  # "localhost"
 MQTT_PORT = config['display']['broker_port']  # "1883"
 MQTT_CLIENT_NAME = config['display']['name']  # "Car Park Display"
 MQTT_TOPIC = config['display']['topic']
-# MQTT_TOPIC_1 = config['display']['topic_1']  # "Available Bays"
-# MQTT_TOPIC_2 = config['display']['topic_2']  # "Date/Time"
-# MQTT_TOPIC_3 = config['display']['topic_3']  # "Current Temp"
 MQTT_KEEP_ALIVE = 300
 
 # ------------------------------------------------------------------------------------#
 # You don't need to understand how to implement this class, just how to use it.       #
 # ------------------------------------------------------------------------------------#
 # TODO: got to the main section of this script **first** and run the CarParkDisplay.  #
-
 
 class WindowedDisplay:
     """Displays values for a given set of fields as a simple GUI window. Use .show() to display the window; use .update() to update the values displayed.
@@ -85,7 +77,6 @@ class CarParkDisplay:
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI
     fields = ['Available Bays', 'Temperature', 'Time']
-
 
     def __init__(self):
         self.client = mqtt.Client()
