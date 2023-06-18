@@ -42,13 +42,14 @@ class CarPark(MqttDevice):
         #        + f"Temperature: {self._temperature}"
         #    )
         #)
-        message = (
-            f"Available Bays: {self.available_spaces}, "
-            + f"Time: {readable_time}, "
-            + f"Temperature: {self._temperature}"
-        )
+        message = {
+            'Available Bays': self.available_spaces,
+            'Time': readable_time,
+            'Temperature': self._temperature
+        }
+        data = toml.dumps(message)
         print(message)
-        self.client.publish('display', message)
+        self.client.publish('display', data)
 
     def on_car_entry(self):
         if self.available_spaces != 0:
