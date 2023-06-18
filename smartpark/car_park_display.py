@@ -86,6 +86,7 @@ class CarParkDisplay:
     # determines what fields appear in the UI
     fields = ['Available Bays', 'Temperature', 'Time']
 
+
     def __init__(self):
         self.client = mqtt.Client()
         self.client.on_connect = self.on_connect
@@ -94,9 +95,6 @@ class CarParkDisplay:
         self.client.loop_start()
         self.window = WindowedDisplay(
             'Moondalup', CarParkDisplay.fields)
-        updater = threading.Thread(target=self.check_updates)
-        updater.daemon = True
-        updater.start()
         self.window.show()
 
     def on_connect(self, client, userdata, flags, rc):
@@ -104,21 +102,30 @@ class CarParkDisplay:
         self.client.subscribe(MQTT_TOPIC)
 
     def on_message(self, client, userdata, msg):
+        # Check to see if MQTT message is received
         print('a message was received')
-        payload = msg.payload.decode()
+        payload = msg.payload.decode("UTF-8")
+        print(payload)
+        data = toml.loads(payload)
+        available_bays = data.get('Available Bays')
+        current_time = data.get('Time')
+        temperature = data.get('Temperature')
+        print(available_bays)
 
 
+        updater = threading.Thread(target=self.check_updates, args=(available_bays, current_time, temperature))
+        updater.daemon = True
+        updater.start()
 
-    def check_updates(self):
-
+    def check_updates(self, available_bays, current_time, temperature):
         while True:
             # NOTE: Dictionary keys *must* be the same as the class fields
             field_values = dict(zip(CarParkDisplay.fields, [
-                f'{random.randint(0, 150):03d}',
-                f'{random.randint(0, 45):02d}℃',
-                time.strftime("%H:%M:%S")]))
+                f"{available_bays}",
+                f'{temperature}℃',
+                f'{current_time}']))
             # Pretending to wait on updates from MQTT
-            time.sleep(random.randint(1, 10))
+            # time.sleep(random.randint(1, 10))
             # When you get an update, refresh the display.
             self.window.update(field_values)
 
