@@ -1,6 +1,6 @@
 import paho.mqtt.client as mqtt
 import time
-import json
+import toml
 
 MQTT_HOST = "localhost"
 MQTT_PORT = 1883
@@ -22,9 +22,9 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     message = msg
     message_data = str(message.payload.decode("UTF-8"))
-    data = json.loads(message_data)
-    output = f"{MQTT_CLIENT_NAME}: it was {data['temp']} at {data['datetime']}!"
-    print(output)
+    data = toml.loads(message_data)
+    # output = f"{MQTT_CLIENT_NAME}: The temperature was {data['current temp']} at {data['datetime']}!"
+    # print(output)
 
 
 # Activate when connection established
