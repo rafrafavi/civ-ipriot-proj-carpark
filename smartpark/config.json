@@ -1,0 +1,27 @@
+{
+    "CarParks": [
+        {
+            "name": "mws-park-international",
+            "total-spaces": 130,
+            "total-cars": 0,
+            "location": "moondalup",
+            "broker": "127.0.0.1",
+            "port": 1883,
+            "Sensors": [
+                {
+                    "name": "sensor1",
+                    "type": "entry"
+                },
+                {
+                    "name": "sensor2",
+                    "type": "exit"
+                }
+            ],
+            "Displays": [
+                {
+                    "name": "display1"
+                }
+            ]
+        }
+    ]
+}

@@ -50,8 +50,6 @@ class CarPark(mqtt_device.MqttDevice):
         self.total_cars += 1
         self._publish_event()
 
-
-
     def on_car_exit(self):
         self.total_cars -= 1
         self._publish_event()

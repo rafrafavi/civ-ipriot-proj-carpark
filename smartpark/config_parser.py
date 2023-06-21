@@ -27,13 +27,49 @@ see [realpython.com](https://realpython.com/python-toml/) for more info.
 
 Finally, you can use `yaml` if you prefer.
 
-
-
 """
+import json
 
 
-
-def parse_config(config: dict) -> dict:
+def parse_config(config_file):
     """Parse the config file and return the values as a dictionary"""
-    # TODO: get the configuration from a parsed file
-    return {'location': 'TBD', 'total_spaces': 0, 'broker_host': 'TBD', 'broker_port': 0}
+    with open(config_file) as file:
+        config_data = json.load(file)
+
+    parsed_config = {}
+
+    # Parsing the carpark information
+    parsed_config['CarParks'] = []
+    for car_park in config_data['CarParks']:
+        car_park_info = {}
+        car_park_info['name'] = car_park['name']
+        car_park_info['total-spaces'] = car_park['total-spaces']
+        car_park_info['total-cars'] = car_park['total-cars']
+        car_park_info['location'] = car_park['location']
+        car_park_info['broker'] = car_park['broker']
+        car_park_info['port'] = car_park['port']
+
+        # Parsing the info for sensors inside the carpark
+        car_park_info['Sensors'] = []
+        for sensor in car_park['Sensors']:
+            sensor_info = {}
+            sensor_info['name'] = sensor['name']
+            sensor_info['type'] = sensor['type']
+            car_park_info['Sensors'].append(sensor_info)
+
+        # Parsing the display info inside the carpark
+        car_park_info['Displays'] = []
+        for display in car_park['Displays']:
+            display_info = {}
+            display_info['name'] = display['name']
+            car_park_info['Displays'].append(display_info)
+
+        parsed_config['CarParks'].append(car_park_info)
+
+    return parsed_config
+
+
+config_file = "config.json"
+parsed_config = parse_config(config_file)
+
+print(parsed_config)
