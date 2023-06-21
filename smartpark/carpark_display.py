@@ -1,6 +1,5 @@
 from windowed_display import WindowedDisplay
 import threading
-import random
 import time
 import paho.mqtt.client as paho
 from config_parser import parse_config

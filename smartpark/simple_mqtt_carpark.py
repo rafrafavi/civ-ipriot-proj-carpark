@@ -11,6 +11,7 @@ class CarPark(mqtt_device.MqttDevice):
         self.carpark_name = config['name']
         print(config['name'])
         self.total_spaces = config['total-spaces']
+        self.max_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
         self.client.on_message = self.on_message
         self.client.subscribe('sensor')
@@ -19,6 +20,12 @@ class CarPark(mqtt_device.MqttDevice):
     @property
     def available_spaces(self):
         available = self.total_spaces - self.total_cars
+        # To stop the available spaces dipping below 0.
+        if available < 0:
+            available = 0
+        # Caps the available parking to the upper limit so it cant exceed this.
+        if available > self.max_spaces:
+            available = self.max_spaces
         return max(available, 0)
 
     @property
@@ -52,6 +59,8 @@ class CarPark(mqtt_device.MqttDevice):
 
     def on_car_exit(self):
         self.total_cars -= 1
+        if self.total_cars < 0:
+            self.total_cars = 0
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
