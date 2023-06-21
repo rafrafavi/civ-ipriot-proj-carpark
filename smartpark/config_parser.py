@@ -31,40 +31,26 @@ Finally, you can use `yaml` if you prefer.
 import json
 
 
-def parse_config(config_file):
+def parse_config(file_path: str) -> dict:
     """Parse the config file and return the values as a dictionary"""
     with open(config_file) as file:
         config_data = json.load(file)
 
-    parsed_config = {}
+    carpark_config = config_data["CarParks"][0]
 
     # Parsing the carpark information
-    parsed_config['CarParks'] = []
-    for car_park in config_data['CarParks']:
-        car_park_info = {}
-        car_park_info['name'] = car_park['name']
-        car_park_info['total-spaces'] = car_park['total-spaces']
-        car_park_info['total-cars'] = car_park['total-cars']
-        car_park_info['location'] = car_park['location']
-        car_park_info['broker'] = car_park['broker']
-        car_park_info['port'] = car_park['port']
-
-        # Parsing the info for sensors inside the carpark
-        car_park_info['Sensors'] = []
-        for sensor in car_park['Sensors']:
-            sensor_info = {}
-            sensor_info['name'] = sensor['name']
-            sensor_info['type'] = sensor['type']
-            car_park_info['Sensors'].append(sensor_info)
-
-        # Parsing the display info inside the carpark
-        car_park_info['Displays'] = []
-        for display in car_park['Displays']:
-            display_info = {}
-            display_info['name'] = display['name']
-            car_park_info['Displays'].append(display_info)
-
-        parsed_config['CarParks'].append(car_park_info)
+    parsed_config = {
+        'name': carpark_config['name'],
+        'total-spaces': carpark_config['total-spaces'],
+        'total-cars': carpark_config['total-cars'],
+        'location': carpark_config['location'],
+        'topic-root': carpark_config['topic-root'],
+        'topic-qualifier': carpark_config['topic-qualifier'],
+        'broker': carpark_config['broker'],
+        'port': carpark_config['port'],
+        'Sensors': carpark_config['Sensors'],
+        'Displays': carpark_config['Displays'],
+    }
 
     return parsed_config
 
