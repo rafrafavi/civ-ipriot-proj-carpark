@@ -1,21 +1,20 @@
 from datetime import datetime
-
 import mqtt_device
 import paho.mqtt.client as paho
 from paho.mqtt.client import MQTTMessage
-
-
+import json
+import random
 class CarPark(mqtt_device.MqttDevice):
     """Creates a carpark object to store the state of cars in the lot"""
-
     def __init__(self, config):
         super().__init__(config)
+        self.carpark_name = config['name']
+        print(config['name'])
         self.total_spaces = config['total-spaces']
         self.total_cars = config['total-cars']
         self.client.on_message = self.on_message
         self.client.subscribe('sensor')
         self.client.loop_forever()
-        self._temperature = None
 
     @property
     def available_spaces(self):
@@ -24,11 +23,12 @@ class CarPark(mqtt_device.MqttDevice):
 
     @property
     def temperature(self):
-        self._temperature
+        return self._temperature
     
     @temperature.setter
     def temperature(self, value):
-        self._temperature = value
+        value = random.gauss(30, 1)
+        self._temperature = round(value, 1)
         
     def _publish_event(self):
         readable_time = datetime.now().strftime('%H:%M')
@@ -36,15 +36,15 @@ class CarPark(mqtt_device.MqttDevice):
             (
                 f"TIME: {readable_time}, "
                 + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
+                + f"TEMPC: {self.temperature}"
             )
         )
         message = (
             f"TIME: {readable_time}, "
             + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
+            + f"TEMPC: {self.temperature}"
         )
-        self.client.publish('display', message)
+        self.client.publish('display1', message)
 
     def on_car_entry(self):
         self.total_cars += 1
@@ -56,8 +56,9 @@ class CarPark(mqtt_device.MqttDevice):
 
     def on_message(self, client, userdata, msg: MQTTMessage):
         payload = msg.payload.decode()
-        # TODO: Extract temperature from payload
-        # self.temperature = ... # Extracted value
+        # Extract temperature from payload
+        self.temperature = random.gauss(30, 1)
+
         if 'exit' in payload:
             self.on_car_exit()
         else:
@@ -65,17 +66,8 @@ class CarPark(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config = {'name': "raf-park",
-              'total-spaces': 130,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
-    # TODO: Read config from file
+    # Read config from file
+    from config_parser import parse_config
+    config = parse_config("config.json")
+    print("Carpark initialized")
     car_park = CarPark(config)
-    print("Carpark initialized")
-    print("Carpark initialized")

@@ -1,3 +1,9 @@
+from windowed_display import WindowedDisplay
+import threading
+import random
+import time
+import paho.mqtt.client as paho
+from config_parser import parse_config
 class CarParkDisplay:
     """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
     # determines what fields appear in the UI
@@ -6,45 +12,54 @@ class CarParkDisplay:
     def __init__(self):
         self.window = WindowedDisplay(
             'Moondalup', CarParkDisplay.fields)
+        print("Initialised.") # Can delete once its working
+
         updater = threading.Thread(target=self.check_updates)
         updater.daemon = True
         updater.start()
+
         self.window.show()
 
+
+    def on_message(self, client, userdata, message):
+        data = message.payload.decode()
+        split_data = data.split(',')
+        for item in split_data:
+            key, value = item.split(": ")
+            if key.strip() == 'SPACES':
+                self.spaces = int(value)
+            if key.strip() == 'TIME':
+                self.time = value
+            if key.strip() == 'TEMPC':
+                self.temp = float(value)
+
+        field_values = {
+            'Available bays': self.spaces,
+            'Temperature': f'{self.temp}℃',
+            'At': self.time
+        }
+        self.window.update(field_values)
+
     def check_updates(self):
-        # TODO: This is where you should manage the MQTT subscription
+        self.spaces = ""
+        self.temp = ""
+        self.time = ""
+
         while True:
-            # NOTE: Dictionary keys *must* be the same as the class fields
-            field_values = dict(zip(CarParkDisplay.fields, [
-                f'{random.randint(0, 150):03d}',
-                f'{random.randint(0, 45):02d}℃',
-                time.strftime("%H:%M:%S")]))
-            # Pretending to wait on updates from MQTT
-            time.sleep(random.randint(1, 10))
-            # When you get an update, refresh the display.
-            self.window.update(field_values)
+            field_values = {
+                'Available bays': self.spaces,
+                'Temperature': f'{self.temp}℃',
+                'At': self.time
+            }
+            config = parse_config("config2.json")
+            self.client = paho.Client(config['name'])
+            self.client.connect(config["broker"], config["port"])
+            self.client.on_message = self.on_message
+            self.client.loop_start()
+            self.client.subscribe('display1')
+            time.sleep(5)
+            self.client.loop_stop()
 
-class CarDetector:
-    """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
 
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("Car Detector ULTRA")
-
-        self.btn_incoming_car = tk.Button(
-            self.root, text='🚘 Incoming Car', font=('Arial', 50), cursor='right_side', command=self.incoming_car)
-        self.btn_incoming_car.pack(padx=10, pady=5)
-        self.btn_outgoing_car = tk.Button(
-            self.root, text='Outgoing Car 🚘',  font=('Arial', 50), cursor='bottom_left_corner', command=self.outgoing_car)
-        self.btn_outgoing_car.pack(padx=10, pady=5)
-
-        self.root.mainloop()
-
-    def incoming_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes in")
-
-    def outgoing_car(self):
-        # TODO: implement this method to publish the detection via MQTT
-        print("Car goes out")
-
+if __name__ == '__main__':
+    CarParkDisplay()

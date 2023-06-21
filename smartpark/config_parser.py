@@ -33,10 +33,10 @@ import json
 
 def parse_config(file_path: str) -> dict:
     """Parse the config file and return the values as a dictionary"""
-    with open(config_file) as file:
-        config_data = json.load(file)
+    with open(file_path) as file:
+        config_file = json.load(file)
 
-    carpark_config = config_data["CarParks"][0]
+    carpark_config = config_file["CarParks"][0]
 
     # Parsing the carpark information
     parsed_config = {
@@ -53,9 +53,3 @@ def parse_config(file_path: str) -> dict:
     }
 
     return parsed_config
-
-
-config_file = "config.json"
-parsed_config = parse_config(config_file)
-
-print(parsed_config)

@@ -20,6 +20,8 @@ class Display(mqtt_device.MqttDevice):
        self.display(*data.split(','))
        # TODO: Parse the message and extract free spaces,\
        #  temperature, time
+
+
 if __name__ == '__main__':
     config = {'name': 'display',
      'location': 'L306',
