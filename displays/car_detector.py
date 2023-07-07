@@ -1,6 +1,5 @@
 import tkinter as tk
 import paho.mqtt.client as mqtt
-from windowed_display import WindowedDisplay
 from config_parser import load_config
 
 class CarDetector:

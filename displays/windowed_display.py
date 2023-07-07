@@ -1,7 +1,6 @@
 import tkinter as tk
 from typing import Iterable
 
-
 class WindowedDisplay:
     DISPLAY_INIT = '– – –'
     SEP = ':'

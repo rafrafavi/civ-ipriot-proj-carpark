@@ -3,7 +3,7 @@ import toml
 import os
 
 
-def convert_config_to_toml():
+def load_config():
     """
     Converts the configuration from JSON to TOML format and writes it to the config.toml file.
     """
@@ -26,4 +26,5 @@ def convert_config_to_toml():
 
 
 # Call the function to convert the configuration to TOML format
-convert_config_to_toml()
+if __name__ == '__main__':
+    load_config()
