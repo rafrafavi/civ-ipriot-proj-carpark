@@ -16,7 +16,7 @@ from typing import Iterable
 
 
 class WindowedDisplay:
-    """Displays values for a given set of fields as a simple GUI window. Use .show() to display the window; use .update() to update the values displayed.
+    """displays values for a given set of fields as a simple GUI window. Use .show() to display the window; use .update() to update the values displayed.
     """
 
     DISPLAY_INIT = '– – –'

@@ -1,7 +1,7 @@
 import mqtt_device
 import time
 class Display(mqtt_device.MqttDevice):
-    """Displays the number of cars and the temperature"""
+    """displays the number of cars and the temperature"""
     def __init__(self, config):
         super().__init__(config)
         self.client.on_message = self.on_message
