@@ -1,25 +1,73 @@
+import random
+import threading
+import time
+import paho.mqtt.client as mqtt
+from windowed_display import WindowedDisplay
+from config_parser import load_config
+
 class CarParkDisplay:
-    """Provides a simple display of the car park status. This is a skeleton only. The class is designed to be customizable without requiring and understanding of tkinter or threading."""
-    # determines what fields appear in the UI
     fields = ['Available bays', 'Temperature', 'At']
 
-    def __init__(self):
-        self.window = WindowedDisplay(
-            'Moondalup', CarParkDisplay.fields)
+    def __init__(self, config):
+        """
+        Initializes the CarParkDisplay class.
+
+        Args:
+            config (dict): Configuration parameters for the car park display.
+        """
+        self.config = config
+        self.window = WindowedDisplay(self.config["name"], CarParkDisplay.fields)
+        self.available_bays = self.config["total-spaces"]
         updater = threading.Thread(target=self.check_updates)
         updater.daemon = True
         updater.start()
+
+        # MQTT client setup
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.connect(self.config["broker"], self.config["port"])
+        self.mqtt_client.subscribe("car_detection")
+        self.mqtt_client.on_message = self.on_message
+        self.mqtt_client.loop_start()
+
         self.window.show()
 
+    def on_message(self, client, userdata, message):
+        """
+        Callback function to handle MQTT message events.
+
+        Updates the available bays count based on the car detection events received via MQTT.
+
+        Args:
+            client (mqtt.Client): The MQTT client instance.
+            userdata: Custom user data.
+            message (mqtt.MQTTMessage): The received MQTT message.
+        """
+        payload = message.payload.decode()
+        if "_incoming" in payload:
+            self.available_bays -= 1
+        elif "_outgoing" in payload:
+            self.available_bays += 1
+
     def check_updates(self):
-        # TODO: This is where you should manage the MQTT subscription
+        """
+        Periodically checks for updates and updates the display.
+
+        Retrieves field values (available bays, temperature, and current time) and updates the display
+        at random intervals between 1 and 10 seconds.
+        """
         while True:
-            # NOTE: Dictionary keys *must* be the same as the class fields
-            field_values = dict(zip(CarParkDisplay.fields, [
-                f'{random.randint(0, 150):03d}',
-                f'{random.randint(0, 45):02d}℃',
-                time.strftime("%H:%M:%S")]))
-            # Pretending to wait on updates from MQTT
+            field_values = {
+                'Available bays': f'{self.available_bays}',
+                'Temperature': f'{random.randint(0, 45)}℃',
+                'At': time.strftime("%H:%M:%S")
+            }
             time.sleep(random.randint(1, 10))
-            # When you get an update, refresh the display.
             self.window.update(field_values)
+
+
+if __name__ == '__main__':
+    # Load the config from the TOML file
+    config = load_config('config.toml')
+
+    # Create an instance of CarParkDisplay with the config
+    car_park_display = CarParkDisplay(config)
