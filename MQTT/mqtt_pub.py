@@ -1,8 +1,5 @@
-import paho.mqtt.client as paho
+import paho.mqtt.publish as publish
 
-BROKER, PORT = "localhost", 1883
-
-client = paho.Client()
-client.connect(BROKER, PORT)
-client.publish("lot/sensor", "Hello from Python")
-
+if __name__ == '__main__':
+    # Publish a test message
+    publish.single("lot/sensor", "Hello from Python", hostname="localhost")
