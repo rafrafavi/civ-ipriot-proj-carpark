@@ -1,0 +1,19 @@
+[[CarParks]]
+name = "raf-park-international"
+total-spaces = 130
+total-cars = 0
+location = "moondalup"
+broker = "localhost"
+port = 1883
+[[CarParks.Sensors]]
+name = "sensor1"
+type = "entry"
+
+[[CarParks.Sensors]]
+name = "sensor2"
+type = "exit"
+
+[[CarParks.Displays]]
+name = "display1"
+
+
