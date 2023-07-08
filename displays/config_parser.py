@@ -3,7 +3,7 @@ import toml
 import os
 
 
-def load_config():
+def parse_config():
     """
     Converts the configuration from JSON to TOML format and writes it to the config.toml file.
     """
@@ -25,6 +25,21 @@ def load_config():
         f.write(toml_data)
 
 
+def load_config(file_path: str) -> dict:
+    """
+    Loads the configuration from a TOML file.
+
+    Args:
+        file_path (str): Path to the TOML file.
+
+    Returns:
+        dict: The loaded configuration as a dictionary.
+    """
+    with open(file_path, 'r') as f:
+        config = toml.load(f)["CarParks"][0]
+    return config
+
+
 # Call the function to convert the configuration to TOML format
 if __name__ == '__main__':
-    load_config()
+    parse_config()
