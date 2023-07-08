@@ -3,7 +3,7 @@ import threading
 import time
 import paho.mqtt.client as mqtt
 from windowed_display import WindowedDisplay
-from config_parser import load_config
+from config_parser import ConfigParser
 
 
 class CarParkDisplay:
@@ -68,7 +68,7 @@ class CarParkDisplay:
 
 if __name__ == '__main__':
     # Load the config from the TOML file
-    config = load_config('config.toml')
+    config = ConfigParser.load_config('config.toml')
 
     # Create an instance of CarParkDisplay with the config
     car_park_display = CarParkDisplay(config)

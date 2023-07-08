@@ -1,6 +1,9 @@
 import tkinter as tk
 import paho.mqtt.client as mqtt
-from config_parser import load_config
+try:
+    from config_parser import ConfigParser
+except ModuleNotFoundError:
+    from displays.config_parser import ConfigParser
 
 
 class CarDetector:
@@ -71,7 +74,7 @@ class CarDetector:
 
 if __name__ == '__main__':
     # Load the config from the TOML file
-    config = load_config('config.toml')
+    config = ConfigParser.load_config('config.toml')
 
     # Create an instance of CarDetector
     car_detector = CarDetector(config)
