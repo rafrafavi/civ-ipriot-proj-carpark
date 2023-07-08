@@ -10,7 +10,9 @@ sys.path.insert(0, parent_dir)
 from displays.config_parser import ConfigParser
 class TestConfigParser(unittest.TestCase):
     def test_convert_json_to_toml(self):
-        # Test case for converting JSON to TOML
+        """
+        Test case for converting JSON to TOML.
+        """
         json_data = {
             "CarParks": [
                 {

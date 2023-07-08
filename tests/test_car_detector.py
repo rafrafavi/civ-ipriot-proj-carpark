@@ -8,6 +8,9 @@ sys.path.insert(0, parent_dir)
 
 from displays.car_detector import CarDetector
 class TestCarDetector(unittest.TestCase):
+    """
+    Test cases for car detector events.
+    """
     def test_incoming_car(self):
         # Test case for incoming car event
         config = {

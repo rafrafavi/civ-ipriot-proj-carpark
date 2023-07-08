@@ -1,12 +1,14 @@
 import tkinter as tk
 import paho.mqtt.client as mqtt
+
 try:
-    from config_parser import ConfigParser
+    from config_parser import ConfigParser  # Needed to run the car detector
 except ModuleNotFoundError:
-    from displays.config_parser import ConfigParser
+    from displays.config_parser import ConfigParser # Needed to run car detector tests
 
 
 class CarDetector:
+    """Provides a couple of simple buttons that can be used to represent a sensor detecting a car. This is a skeleton only."""
     def __init__(self, config):
         """
         Initializes the CarDetector class.
@@ -52,7 +54,7 @@ class CarDetector:
         """
         if self.available_bays < self.config["total-spaces"]:
             self.available_bays += 1
-            print(f"Available bays: {self.available_bays}")
+            print(f"Available bays left: {self.available_bays}")
             self.publish_detection("incoming")
         else:
             print("All bays are occupied")
@@ -61,15 +63,15 @@ class CarDetector:
         """
         Handles the outgoing car event.
 
-        Decrements the available bays if there are cars to remove and publishes the detection event.
+        Increases the available bays and publishes the outgoing detection event.
         Prints the current available bays count.
         """
         if self.available_bays > 0:
             self.available_bays -= 1
-            print(f"Available bays: {self.available_bays}")
+            print(f"Available bays left: {self.available_bays}")
             self.publish_detection("outgoing")
         else:
-            print("No cars to remove")
+            print("No cars to remove from parking lot.")
 
 
 if __name__ == '__main__':
