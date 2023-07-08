@@ -2,6 +2,7 @@ import tkinter as tk
 import paho.mqtt.client as mqtt
 from config_parser import load_config
 
+
 class CarDetector:
     def __init__(self, config):
         """
@@ -29,7 +30,7 @@ class CarDetector:
 
         self.root.mainloop()
 
-    def publish_detection(self, car_type):
+    def publish_detection(self, car_type: str):
         """
         Publishes the car detection event to the MQTT broker.
 
