@@ -120,3 +120,6 @@ pip install -e .
 ```
 
 This command installs the project in editable mode, which means any changes you make to the source code will be immediately reflected in the installed module.
+
+> [!NOTE]
+> Added information
