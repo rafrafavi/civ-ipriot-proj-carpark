@@ -1,21 +1,24 @@
 from datetime import datetime
-
-import mqtt_device
-import paho.mqtt.client as paho
+from mqtt_device import MqttDevice
 from paho.mqtt.client import MQTTMessage
+from config_parser import parse_config
+import toml
 
-
-class CarPark(mqtt_device.MqttDevice):
-    """Creates a carpark object to store the state of cars in the lot"""
+class CarPark(MqttDevice):
 
     def __init__(self, config):
         super().__init__(config)
-        self.total_spaces = config['total-spaces']
-        self.total_cars = config['total-cars']
+        self.total_spaces = config['config']['total_spaces']
+        self.total_cars = config['config']['total_cars']
+        # print(f"{self.name}, {self.location}, {self.broker}, {self.port}")
+        # print({self.topic})
         self.client.on_message = self.on_message
-        self.client.subscribe('sensor')
+        # self.client.subscribe('sensor')
+        self.client.subscribe(config['config']['topic'])
+        self.client.subscribe(config['temperature']['topic'])
         self.client.loop_forever()
         self._temperature = None
+
 
     @property
     def available_spaces(self):
@@ -31,53 +34,62 @@ class CarPark(mqtt_device.MqttDevice):
         self._temperature = value
         
     def _publish_event(self):
-        readable_time = datetime.now().strftime('%H:%M')
-        print(
-            (
-                f"TIME: {readable_time}, "
-                + f"SPACES: {self.available_spaces}, "
-                + "TEMPC: 42"
-            )
-        )
-        message = (
-            f"TIME: {readable_time}, "
-            + f"SPACES: {self.available_spaces}, "
-            + "TEMPC: 42"
-        )
-        self.client.publish('display', message)
+        readable_time = datetime.now().strftime('%H:%M:%S')
+        #print(
+        #    (
+        #        f"Available Spaces: {self.available_spaces}, "
+        #        + f"Time: {readable_time}, "
+        #        + f"Temperature: {self._temperature}"
+        #    )
+        #)
+        message = {
+            'Available Bays': self.available_spaces,
+            'Time': readable_time,
+            'Temperature': self._temperature
+        }
+        data = toml.dumps(message)
+        print(message)
+        self.client.publish('display', data)
 
     def on_car_entry(self):
-        self.total_cars += 1
+        if self.available_spaces != 0:
+            self.total_cars += 1
+        else:
+            pass
+        # print(self.total_cars)
+        print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
 
 
     def on_car_exit(self):
-        self.total_cars -= 1
+        if self.total_cars != 0:
+            self.total_cars -= 1
+        else:
+            pass
+        # print(self.total_cars)
+        print(f"Available Spaces: {self.available_spaces}")
         self._publish_event()
 
     def on_message(self, client, userdata, msg: MQTTMessage):
-        payload = msg.payload.decode()
-        # TODO: Extract temperature from payload
-        # self.temperature = ... # Extracted value
-        if 'exit' in payload:
+        payload = msg.payload.decode("UTF-8")
+        # print(payload)
+        if 'Car goes out' in payload:
             self.on_car_exit()
-        else:
+        elif 'Car goes in' in payload:
             self.on_car_entry()
+        elif 'Current Temp' in payload:
+            data = toml.loads(payload)
+            temperature = data['Current Temp']
+            # print(temperature)
+            self._temperature = temperature
+            self._publish_event()
+            # print(self._temperature)
+        else:
+            pass
 
 
 if __name__ == '__main__':
-    config = {'name': "raf-park",
-              'total-spaces': 130,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
-    # TODO: Read config from file
+    config = parse_config()
     car_park = CarPark(config)
-    print("Carpark initialized")
     print("Carpark initialized")

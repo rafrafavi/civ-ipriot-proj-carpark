@@ -1,0 +1,31 @@
+[config]
+name = 'Car Park'
+location = "L306"
+total_spaces = 192
+total_cars = 0
+broker_host = 'localhost'
+broker_port = 1883
+topic_root = 'Lot'
+topic_qualifier = 'Sensor'
+topic = 'Car Park / Sensor / Lot / L306'
+
+[sensor]
+name = 'L306 Sensor'
+broker_host = 'localhost'
+broker_port = 1883
+topic = 'Car Park / Sensor / Lot / L306'
+
+[temperature]
+name = "Temperature Monitor"
+broker_host = 'localhost'
+broker_port = 1883
+topic = "Temperature"
+
+[display]
+name = "Car Park Display"
+broker_host = 'localhost'
+broker_port = 1883
+topic = 'display'
+#topic_1 = "Available Bays"
+#topic_2 = "Date/Time"
+#topic_3 = "Current Temp"

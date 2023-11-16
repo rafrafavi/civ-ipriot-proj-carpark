@@ -1,24 +1,24 @@
-import paho.mqtt.client as paho
+import paho.mqtt.client as mqtt
+import toml
+
+
 class MqttDevice:
     def __init__(self, config):
-        self.name = config['name']
-        self.location = config['location']
+        self.name = config['config']['name']
+        self.location = config['config']['location']
 
         # Define topic components:
-        self.topic_root = config['topic-root']
-        self.topic_qualifier = config['topic-qualifier']
+        self.topic_root = config['config']['topic_root']
+        self.topic_qualifier = config['config']['topic_qualifier']
         self.topic = self._create_topic_string()
 
         # Configure broker
-        self.broker = config['broker']
-        self.port = config['port']
+        self.broker = config['config']['broker_host']
+        self.port = config['config']['broker_port']
 
-        # initialise a paho client and bind it to the object (has-a)
-
-        self.client = paho.Client()
-        self.client.connect(self.broker,
-                            self.port)
+        # initialise a mqtt client and bind it to the object (has-a)
+        self.client = mqtt.Client()
+        self.client.connect(self.broker, self.port)
 
     def _create_topic_string(self):
-        return (f"{self.topic_root}/{self.location}/" +
-                f"{self.name}/{self.topic_qualifier}")
+        return f"{self.name} / {self.topic_qualifier} / {self.topic_root} / {self.location}"
