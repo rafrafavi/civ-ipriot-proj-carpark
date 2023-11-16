@@ -10,7 +10,7 @@ class Sensor(mqtt_device.MqttDevice):
     @property
     def temperature(self):
         """Returns the current temperature"""
-        return random.randint(10, 35) 
+        return random.randint(10, 35)
 
     def on_detection(self, message):
         """Triggered when a detection occurs"""
@@ -30,19 +30,13 @@ class Sensor(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config1 = {'name': 'sensor',
-              'location': 'moondalup',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              }
-    # TODO: Read previous config from file instead of embedding
+    end_line = 6
+    with open("config.toml", "r") as config1:
+        stop = [next(config1) for i in range(end_line)]
 
     sensor1 = Sensor(config1)
-
 
     print("Sensor initialized")
     sensor1.start_sensing()
 
     sensor1.start_sensing()
-

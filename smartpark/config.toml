@@ -1,0 +1,23 @@
+[parking_lot]
+    location = "Moondalup City Square Parking"
+    total_spaces = 192
+    broker_host = "localhost"
+    broker_port = 1883
+
+[crw-parking-lot]
+    total-spaces = 192
+    total-cars = 0
+    location = 'Moondalup City Square Parking'
+    topic-root = "lot"
+    broker = 'localhost'
+    port = 1883
+    topic-qualifier = 'entry'
+    is_stuff = [false]
+
+[display]
+    name = 'display'
+    location = 'L306'
+    topic-root = "lot"
+    broker = 'localhost'
+    port = 1883
+    topic-qualifier = 'na'

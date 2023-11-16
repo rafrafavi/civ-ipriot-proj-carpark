@@ -228,7 +228,7 @@ For the unittest module, you can create test cases that cover the parsing of the
 
 import unittest
 import tomli
-from parking_lot import parse_config
+from smartpark import config_parser
 
 class TestConfigParsing(unittest.TestCase):
     def test_parse_config(self):
@@ -240,7 +240,7 @@ class TestConfigParsing(unittest.TestCase):
         broker_port = 1883
         '''
         config = tomli.loads(config_string)
-        parking_lot = parse_config(config)
+        parking_lot = config_parser(config)
         self.assertEqual(parking_lot.location, "Moondalup City Square Parking")
         self.assertEqual(parking_lot.total_spaces, 192)
 ```
@@ -250,11 +250,12 @@ class TestConfigParsing(unittest.TestCase):
 ```python
 
 import unittest
-from parking_lot import ParkingLot
+from smartpark import carpark
+
 
 class TestParkingLot(unittest.TestCase):
     def test_no_negative_spaces(self):
-        parking_lot = ParkingLot("Test Location", 2, "localhost", 1883)
+        parking_lot = simple_mqtt_carpark("Test Location", 2, "localhost", 1883)
         parking_lot.available_spaces = 0
         parking_lot.enter()
         parking_lot.enter()
@@ -325,7 +326,7 @@ enter_button.pack()
 exit_button.pack()
 ```
 
-## Alternative 2: Text File for for Screen Reader Compatibility
+## Alternative 2: Text File for Screen Reader Compatibility
 
 Create an alternative solution where the parking lot information is updated in a text file, allowing access to the information using a screen reader.
 

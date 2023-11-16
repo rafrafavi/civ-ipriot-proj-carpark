@@ -50,8 +50,6 @@ class CarPark(mqtt_device.MqttDevice):
         self.total_cars += 1
         self._publish_event()
 
-
-
     def on_car_exit(self):
         self.total_cars -= 1
         self._publish_event()
@@ -67,17 +65,11 @@ class CarPark(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config = {'name': "raf-park",
-              'total-spaces': 130,
-              'total-cars': 0,
-              'location': 'L306',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              'topic-qualifier': 'entry',
-              'is_stuff': False
-              }
+    with open("config.toml", "r") as config:
+        config.readlines()
+
     # TODO: Read config from file
+
     car_park = CarPark(config)
     print("Carpark initialized")
     print("Carpark initialized")
