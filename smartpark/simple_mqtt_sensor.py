@@ -6,7 +6,10 @@ import mqtt_device
 
 
 class Sensor(mqtt_device.MqttDevice):
-
+    def __init__(self, config):
+        super().__init__(config['broker'])
+        sensor_name = config['broker']['sensor']
+        print(f" Sensor at {sensor_name} is ready")
     @property
     def temperature(self):
         """Returns the current temperature"""
@@ -30,19 +33,13 @@ class Sensor(mqtt_device.MqttDevice):
 
 
 if __name__ == '__main__':
-    config1 = {'name': 'sensor',
-              'location': 'moondalup',
-              'topic-root': "lot",
-              'broker': 'localhost',
-              'port': 1883,
-              }
-    # TODO: Read previous config from file instead of embedding
 
+    # TODO: Read previous config from file instead of embedding - done
+    from config_parser import parse_config
+
+    config1 = parse_config("moo.toml")
     sensor1 = Sensor(config1)
-
-
     print("Sensor initialized")
     sensor1.start_sensing()
 
-    sensor1.start_sensing()
 
