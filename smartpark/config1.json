@@ -1,0 +1,12 @@
+{
+   "name":"raf-park-international",
+   "total-spaces":3,
+   "total-cars":0,
+   "location":"moondalup",
+   "broker":"localhost",
+   "port":1883,
+   "temperature": "None",
+
+   "topic-root": "Car",
+   "topic-qualifier": "Entering"
+}
