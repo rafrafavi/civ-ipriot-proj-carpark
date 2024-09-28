@@ -1,48 +1,54 @@
 """"Demonstrates a simple implementation of an 'event' listener that triggers
 a publication via mqtt"""
-import random
 
 import mqtt_device
-
+import time
+from random import randrange, uniform
+import json
+from datetime import datetime
+from Car_Class import Car
 
 class Sensor(mqtt_device.MqttDevice):
 
-    @property
-    def temperature(self):
-        """Returns the current temperature"""
-        return random.randint(10, 35) 
-
     def on_detection(self, message):
         """Triggered when a detection occurs"""
-        self.client.publish('sensor', message)
+        self.client.publish(self.topic, message)
 
     def start_sensing(self):
         """ A blocking event loop that waits for detection events, in this
         case Enter presses"""
         while True:
-            print("Press E when 🚗 entered!")
-            print("Press X when 🚖 exited!")
-            detection = input("E or X> ").upper()
-            if detection == 'E':
-                self.on_detection(f"entered, {self.temperature}")
-            else:
-                self.on_detection(f"exited, {self.temperature}")
+            now = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            if randrange(2) == 1:
+                car = Car(parked=True, brand_list=Car.brand_list, colour_list=Car.colour_list)
+                car.arrived()
+                car_data = {
+                    "Brand": car.brand,
+                    "Colour": car.colour,
+                    "Registration": car.registration,
+                    "Parked": car.parked,
+                    "Arrival": car.arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
+                json_car_data = json.dumps(car_data)
+                self.on_detection(json_car_data)
+                print(f"New Car Arrival: {car.colour} {car.brand}, Registration: {car.registration},"
+                f"Arrival: {car.arrival.strftime('%Y-%m-%dT%H:%M:%SZ')}")
+
+
+            time.sleep(5)
+
 
 
 if __name__ == '__main__':
-    config1 = {'name': 'sensor',
-              'location': 'moondalup',
+    config = {'name': 'super sensor',
+              'location': 'L306',
               'topic-root': "lot",
               'broker': 'localhost',
               'port': 1883,
+              'topic-qualifier': 'entry'
               }
-    # TODO: Read previous config from file instead of embedding
 
-    sensor1 = Sensor(config1)
-
-
+    sensor = Sensor(config)
     print("Sensor initialized")
-    sensor1.start_sensing()
-
-    sensor1.start_sensing()
+    sensor.start_sensing()
 
